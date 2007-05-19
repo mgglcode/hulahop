@@ -1,0 +1,9 @@
+;; -*- scheme -*-
+; object definitions ...
+
+(define-object Browser
+  (in-module "Hulahop")
+  (parent "GtkBin")
+  (c-name "HulahopBrowser")
+  (gtype-id "HULAHOP_TYPE_BROWSER")
+)
