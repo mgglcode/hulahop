@@ -9,6 +9,6 @@ browser.show()
 
 window.show()
 
-print browser.document
+browser.load_uri('http://www.google.com')
 
 gtk.main()
