@@ -1,9 +1,17 @@
-;; -*- scheme -*-
-; object definitions ...
-
 (define-object Browser
   (in-module "Hulahop")
   (parent "GtkBin")
   (c-name "HulahopBrowser")
   (gtype-id "HULAHOP_TYPE_BROWSER")
+)
+
+(define-method get_browser
+  (of-object "HulahopBrowser")
+  (c-name "hulahop_browser_get_browser")
+  (return-type "none")
+)
+
+(define-function startup
+  (c-name "hulahop_startup")
+  (return-type "gboolean")
 )

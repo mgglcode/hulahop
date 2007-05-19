@@ -21,8 +21,10 @@
 #include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
 #include <nsIWebBrowser.h>
+#include <nsILocalFile.h>
 #include <nsIBaseWindow.h>
 #include <nsXULAppAPI.h>
+#include <PyXPCOM.h>
 
 #include "hulahop-browser.h"
 #include "HulahopDirectoryProvider.h"
@@ -43,12 +45,27 @@ static GObjectClass *parent_class = NULL;
 
 static const HulahopDirectoryProvider kDirectoryProvider;
 
-static void
+gboolean
 hulahop_startup()
 {
-    XRE_InitEmbedding(nsnull, nsnull,
-                      NS_CONST_CAST(HulahopDirectoryProvider *,
+    nsresult rv;
+
+    nsCOMPtr<nsILocalFile> greDir;
+    rv = NS_NewNativeLocalFile(nsCString(MOZILLA_HOME), PR_TRUE,
+                               getter_AddRefs(greDir));
+    NS_ENSURE_SUCCESS(rv, FALSE);
+
+    nsCOMPtr<nsILocalFile> binDir;
+    rv = NS_NewNativeLocalFile(nsCString(MOZILLA_HOME"/components"), PR_TRUE,
+                               getter_AddRefs(binDir));
+    NS_ENSURE_SUCCESS(rv, FALSE);
+
+    rv = XRE_InitEmbedding(greDir, binDir,
+                           NS_CONST_CAST(HulahopDirectoryProvider *,
                                     &kDirectoryProvider), nsnull, 0);
+    NS_ENSURE_SUCCESS(rv, FALSE);
+    
+    return TRUE;
 }
 
 static void
@@ -130,6 +147,11 @@ static void
 hulahop_browser_init(HulahopBrowser *browser)
 {
     GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(browser), GTK_NO_WINDOW);
+}
 
-    hulahop_startup();
+PyObject *
+hulahop_browser_get_browser (HulahopBrowser *browser)
+{
+    return PyObject_FromNSInterface(browser->browser,
+                                    NS_GET_IID(nsIWebBrowser), PR_FALSE);
 }

@@ -328,7 +328,7 @@ gecko_cv_glue_libs=
 gecko_cv_extra_pkg_dependencies=
 
 if test "$gecko_cv_gecko_version_int" -ge "1009000"; then
-	gecko_cv_extra_libs="-L$_GECKO_LIBDIR -lxul"
+	gecko_cv_extra_libs="-L$_GECKO_LIBDIR -lxul -lpyxpcom"
 	gecko_cv_glue_libs="-L$_GECKO_LIBDIR -lxpcomglue_s"
 else
 	gecko_cv_extra_pkg_dependencies="${gecko_cv_gecko}-gtkmozembed"

@@ -37,7 +37,5 @@ AC_SUBST([GECKO_LIBS])
 
 AC_OUTPUT([
 Makefile
-components/Makefile
-components/browserhelper/Makefile
 src/Makefile
 ])

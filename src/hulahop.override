@@ -15,3 +15,10 @@ ignore-glob
   *_get_type
   _*
 %%
+override hulahop_browser_get_browser noargs
+static PyObject *
+_wrap_hulahop_browser_get_browser(PyGObject *self)
+{
+    return hulahop_browser_get_browser(HULAHOP_BROWSER(self->obj));
+}
+%%

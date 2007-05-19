@@ -9,4 +9,6 @@ browser.show()
 
 window.show()
 
+print browser.document
+
 gtk.main()

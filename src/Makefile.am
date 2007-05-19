@@ -10,10 +10,12 @@ INCLUDES =					\
 	-I$(MOZILLA_INCLUDE_ROOT)/docshell	\
 	-I$(MOZILLA_INCLUDE_ROOT)/xulapp	\
 	-I$(MOZILLA_INCLUDE_ROOT)/nspr		\
+	-I$(MOZILLA_INCLUDE_ROOT)/pyxpcom	\
 	-I$(MOZILLA_INCLUDE_ROOT)/string	\
 	-I$(MOZILLA_INCLUDE_ROOT)/webbrwsr	\
 	-I$(MOZILLA_INCLUDE_ROOT)/widget	\
-	-I$(MOZILLA_INCLUDE_ROOT)/xpcom
+	-I$(MOZILLA_INCLUDE_ROOT)/xpcom		\
+	-DMOZILLA_HOME=\"$(MOZILLA_HOME)\"
 
 pkgpyexec_LTLIBRARIES = _hulahop.la
 

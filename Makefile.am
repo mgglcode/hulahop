@@ -1,1 +1,1 @@
-SUBDIRS = components src
+SUBDIRS = src

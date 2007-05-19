@@ -20,6 +20,7 @@
 #ifndef __HULAHOP_BROWSER_H__
 #define __HULAHOP_BROWSER_H__
 
+#include <Python.h>
 #include <gtk/gtkbin.h>
 
 G_BEGIN_DECLS
@@ -34,7 +35,10 @@ typedef struct _HulahopBrowserClass       HulahopBrowserClass;
 #define HULAHOP_IS_BROWSER_CLASS(klass)	  (G_TYPE_CHECK_CLASS_TYPE((klass), HULAHOP_TYPE_BROWSER))
 #define HULAHOP_BROWSER_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), HULAHOP_TYPE_BROWSER, HulahopBrowserClass))
 
-GType hulahop_browser_get_type (void);
+gboolean  hulahop_startup             (void);
+
+GType     hulahop_browser_get_type    (void);
+PyObject *hulahop_browser_get_browser (HulahopBrowser *browser);
 
 G_END_DECLS
 
