@@ -21,6 +21,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
 #include <nsIWebBrowser.h>
+#include <nsIWebBrowserFocus.h>
 #include <nsILocalFile.h>
 #include <nsIBaseWindow.h>
 #include <nsXULAppAPI.h>
@@ -66,6 +67,34 @@ hulahop_startup()
     NS_ENSURE_SUCCESS(rv, FALSE);
     
     return TRUE;
+}
+
+static gboolean
+child_focus_in_cb(GtkWidget      *widget,
+                  GdkEventFocus  *event,
+                  HulahopBrowser *browser)
+{
+    nsCOMPtr<nsIWebBrowserFocus> webBrowserFocus;
+    webBrowserFocus = do_QueryInterface(browser->browser);
+    NS_ENSURE_TRUE(webBrowserFocus, FALSE);
+
+    webBrowserFocus->Activate();
+
+    return FALSE;
+}
+
+static gboolean
+child_focus_out_cb(GtkWidget      *widget,
+                   GdkEventFocus  *event,
+                   HulahopBrowser *browser)
+{
+    nsCOMPtr<nsIWebBrowserFocus> webBrowserFocus;
+    webBrowserFocus = do_QueryInterface(browser->browser);
+    NS_ENSURE_TRUE(webBrowserFocus, FALSE);
+
+    webBrowserFocus->Deactivate();
+
+    return FALSE;
 }
 
 static void
@@ -114,6 +143,16 @@ hulahop_browser_realize(GtkWidget *widget)
 
     rv = browser->base_window->Create();
     g_assert(NS_SUCCEEDED(rv));
+
+    GtkWidget *child = GTK_BIN(widget)->child;
+    g_assert(child != NULL);
+
+    g_signal_connect_object(child, "focus-in-event",
+                            G_CALLBACK(child_focus_in_cb),
+                            browser, (GConnectFlags)0);
+    g_signal_connect_object(child, "focus-out-event",
+                            G_CALLBACK(child_focus_out_cb),
+                            browser, (GConnectFlags)0);
 }
 
 static void
@@ -123,13 +162,24 @@ hulahop_browser_map(GtkWidget *widget)
 
     GTK_WIDGET_SET_FLAGS(widget, GTK_MAPPED);
 
-    nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(browser->browser);
-
-    // XXX hack around problem. probably widget/gtk2 window initialization.
-    baseWindow->SetVisibility(PR_FALSE);
-    baseWindow->SetVisibility(PR_TRUE);
+    browser->base_window->SetVisibility(PR_TRUE);
 
     gdk_window_show(widget->window);
+}
+
+static void
+hulahop_browser_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
+{
+    HulahopBrowser *browser = HULAHOP_BROWSER(widget);
+
+    if (GTK_WIDGET_REALIZED(widget)) {
+        gdk_window_move_resize(widget->window,
+                               allocation->x, allocation->y,
+                               allocation->width, allocation->height);
+
+        browser->base_window->SetSize(allocation->width,
+                                      allocation->height, PR_TRUE);
+    }
 }
 
 static void
@@ -141,6 +191,7 @@ hulahop_browser_class_init(HulahopBrowserClass *browser_class)
 
     widget_class->realize = hulahop_browser_realize;
     widget_class->map = hulahop_browser_map;
+    widget_class->size_allocate = hulahop_browser_size_allocate;
 }
 
 static void
