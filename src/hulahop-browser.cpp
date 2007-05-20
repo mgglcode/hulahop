@@ -204,5 +204,5 @@ PyObject *
 hulahop_browser_get_browser (HulahopBrowser *browser)
 {
     return PyObject_FromNSInterface(browser->browser,
-                                    NS_GET_IID(nsIWebBrowser), PR_FALSE);
+                                    NS_GET_IID(nsIWebBrowser));
 }
