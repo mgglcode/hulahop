@@ -9,11 +9,10 @@ window = gtk.Window()
 window.connect("destroy", _quit)
 
 browser = hulahop.Browser()
+browser.load_uri('http://www.google.com')
 window.add(browser)
 browser.show()
 
 window.show()
-
-browser.load_uri('http://www.google.com')
 
 gtk.main()

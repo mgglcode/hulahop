@@ -15,9 +15,7 @@ class Browser(_hulahop.Browser):
         return _hulahop.Browser.get_browser(self)
 
     def get_document(self):
-        if self.browser:
-            return self.browser.contentDOMWindow
-        return None
+        return self.browser.contentDOMWindow
 
     def load_uri(self, uri):
         web_nav = self.browser.queryInterface(interfaces.nsIWebNavigation)

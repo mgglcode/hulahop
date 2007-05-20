@@ -40,6 +40,7 @@ struct _HulahopBrowser {
 	nsCOMPtr<nsIBaseWindow>  base_window;
 
     GtkWidget *offscreen_window;
+    GtkWidget *mozilla_widget;
 };
 
 struct _HulahopBrowserClass {
@@ -83,21 +84,6 @@ hulahop_shutdown()
     XRE_TermEmbedding();
 }
 
-static GtkWidget *
-hulahop_browser_get_offscreen_window(HulahopBrowser *browser)
-{
-    if (browser->offscreen_window == NULL) {
-        browser->offscreen_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        gtk_widget_realize(browser->offscreen_window);
-
-        GtkWidget *offscreen_fixed = gtk_fixed_new();
-        gtk_container_add(GTK_CONTAINER(browser->offscreen_window), offscreen_fixed);
-        gtk_widget_realize(offscreen_fixed);
-    }
-    
-    return browser->offscreen_window;
-}
-
 static gboolean
 child_focus_in_cb(GtkWidget      *widget,
                   GdkEventFocus  *event,
@@ -131,8 +117,7 @@ hulahop_browser_unrealize(GtkWidget *widget)
 {
     HulahopBrowser *browser = HULAHOP_BROWSER(widget);
 
-    GtkWidget *offscreen = hulahop_browser_get_offscreen_window(browser);
-    gtk_widget_reparent(GTK_BIN(widget)->child, GTK_BIN(offscreen)->child);
+    gtk_widget_reparent(browser->mozilla_widget, browser->offscreen_window);
     
     GTK_WIDGET_CLASS(parent_class)->unrealize(widget);
 }
@@ -165,32 +150,16 @@ hulahop_browser_realize(GtkWidget *widget)
     widget->style = gtk_style_attach (widget->style, widget->window);
     gtk_style_set_background(widget->style, widget->window, GTK_STATE_NORMAL);
 
-    nsresult rv;
-    
-    browser->browser = do_CreateInstance
-            ("@mozilla.org/embedding/browser/nsWebBrowser;1");
-    g_assert(browser->browser);
+    g_assert(GTK_IS_WIDGET(browser->mozilla_widget));
 
-    nsCOMPtr<nsIDocShellTreeItem> item = do_QueryInterface(browser->browser);
-    item->SetItemType(nsIDocShellTreeItem::typeContentWrapper);
+    gtk_widget_reparent(browser->mozilla_widget, widget);
 
-    browser->base_window = do_QueryInterface(browser->browser);
-        
-    rv = browser->base_window->InitWindow(widget, nsnull, 0, 0,
-                                          widget->allocation.width,
-                                          widget->allocation.height);
-    g_assert(NS_SUCCEEDED(rv));
-
-    rv = browser->base_window->Create();
-    g_assert(NS_SUCCEEDED(rv));
-
-    GtkWidget *child = GTK_BIN(widget)->child;
-    g_assert(child != NULL);
-
-    g_signal_connect_object(child, "focus-in-event",
+    g_signal_connect_object(browser->mozilla_widget,
+                            "focus-in-event",
                             G_CALLBACK(child_focus_in_cb),
                             browser, (GConnectFlags)0);
-    g_signal_connect_object(child, "focus-out-event",
+    g_signal_connect_object(browser->mozilla_widget,
+                            "focus-out-event",
                             G_CALLBACK(child_focus_out_cb),
                             browser, (GConnectFlags)0);
 }
@@ -265,7 +234,28 @@ hulahop_browser_class_init(HulahopBrowserClass *browser_class)
 static void
 hulahop_browser_init(HulahopBrowser *browser)
 {
-    browser->offscreen_window = NULL;
+    browser->offscreen_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_widget_realize(browser->offscreen_window);
+
+    nsresult rv;
+    
+    browser->browser = do_CreateInstance
+            ("@mozilla.org/embedding/browser/nsWebBrowser;1");
+    g_assert(browser->browser);
+
+    nsCOMPtr<nsIDocShellTreeItem> item = do_QueryInterface(browser->browser);
+    item->SetItemType(nsIDocShellTreeItem::typeContentWrapper);
+
+    browser->base_window = do_QueryInterface(browser->browser);
+
+    rv = browser->base_window->InitWindow(browser->offscreen_window,
+                                          nsnull, 0, 0, 100, 100);
+    g_assert(NS_SUCCEEDED(rv));
+
+    rv = browser->base_window->Create();
+    g_assert(NS_SUCCEEDED(rv));
+
+    browser->mozilla_widget = GTK_BIN(browser->offscreen_window)->child;
 
     GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(browser), GTK_NO_WINDOW);
 }
