@@ -15,8 +15,25 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from hulahop._hulahop import startup, shutdown
+from hulahop import _hulahop
 
-startup()
+from xpcom import components
+from xpcom.components import interfaces
 
-from hulahop.browser import Browser
+class Browser(_hulahop.Browser):
+    def __init__(self):
+        _hulahop.Browser.__init__(self)
+
+    def get_browser(self):
+        return _hulahop.Browser.get_browser(self)
+
+    def get_document(self):
+        return self.browser.contentDOMWindow
+
+    def load_uri(self, uri):
+        web_nav = self.browser.queryInterface(interfaces.nsIWebNavigation)
+        web_nav.loadURI(uri, interfaces.nsIWebNavigation.LOAD_FLAGS_NONE,
+                        None, None, None)
+
+    document = property(get_document)
+    browser = property(get_browser)

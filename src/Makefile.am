@@ -1,6 +1,7 @@
 sugardir = $(pythondir)/hulahop
 sugar_PYTHON =		\
-	__init__.py
+	__init__.py	\
+	browser.py
 
 INCLUDES =					\
 	$(DEPS_CFLAGS)				\
