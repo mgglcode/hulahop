@@ -53,7 +53,7 @@ G_DEFINE_TYPE(HulahopBrowser, hulahop_browser, GTK_TYPE_BIN)
 
 static GObjectClass *parent_class = NULL;
 
-static const HulahopDirectoryProvider kDirectoryProvider;
+static HulahopDirectoryProvider kDirectoryProvider;
 
 gboolean
 hulahop_startup()
@@ -75,8 +75,6 @@ hulahop_startup()
                                     &kDirectoryProvider), nsnull, 0);
     NS_ENSURE_SUCCESS(rv, FALSE);
     
-    XRE_NotifyProfile();
-    
     return TRUE;
 }
 
@@ -84,6 +82,19 @@ void
 hulahop_shutdown()
 {
     XRE_TermEmbedding();
+}
+
+void
+hulahop_set_profile_path(const char *path)
+{
+    kDirectoryProvider.SetProfilePath(path);
+    XRE_NotifyProfile();
+}
+
+void
+hulahop_add_components_path(const char *path)
+{
+    kDirectoryProvider.AddComponentsPath(path);
 }
 
 static gboolean

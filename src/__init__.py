@@ -16,6 +16,7 @@
 # Boston, MA 02111-1307, USA.
 
 from hulahop._hulahop import startup, shutdown
+from hulahop._hulahop import set_profile_path, add_components_path
 
 startup()
 

@@ -37,6 +37,8 @@ typedef struct _HulahopBrowserClass       HulahopBrowserClass;
 
 gboolean  hulahop_startup                 (void);
 void      hulahop_shutdown                (void);
+void      hulahop_set_profile_path        (const char *path);
+void      hulahop_add_components_path     (const char *path);
 
 GType     hulahop_browser_get_type        (void);
 PyObject *hulahop_browser_get_browser     (HulahopBrowser *browser);

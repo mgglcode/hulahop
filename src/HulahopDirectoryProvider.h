@@ -17,13 +17,24 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <nsCOMPtr.h>
+#include <nsCOMArray.h>
 #include <nsIDirectoryService.h>
 
 class HulahopDirectoryProvider : public nsIDirectoryServiceProvider2
 {
     public:
+    
     NS_DECL_ISUPPORTS_INHERITED
     NS_DECL_NSIDIRECTORYSERVICEPROVIDER
     NS_DECL_NSIDIRECTORYSERVICEPROVIDER2
+    
+    void SetProfilePath    (const char *path);
+    void AddComponentsPath (const char *path);
+    
+    private:
+    
+    nsCOMPtr<nsILocalFile> mProfilePath;
+    nsCOMArray<nsILocalFile> mComponentsDirs;
 };
 

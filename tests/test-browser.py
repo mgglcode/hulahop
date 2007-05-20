@@ -1,3 +1,5 @@
+import os
+
 import gtk
 import hulahop
 
@@ -23,6 +25,8 @@ class EventListener:
 def _quit(window):
     hulahop.shutdown()
     gtk.main_quit()
+
+hulahop.set_profile_path(os.path.expanduser('~/.test-hulahop'))
 
 registrar = components.registrar
 registrar.registerFactory('{64355793-988d-40a5-ba8e-fcde78cac631}"',

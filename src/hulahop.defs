@@ -26,3 +26,19 @@
   (c-name "hulahop_shutdown")
   (return-type "none")
 )
+
+(define-function set_profile_path
+  (c-name "hulahop_set_profile_path")
+  (parameters
+    '("gchar*" "path")
+  )
+  (return-type "none")
+)
+
+(define-function add_components_path
+  (c-name "hulahop_add_components_path")
+  (parameters
+    '("gchar*" "path")
+  )
+  (return-type "none")
+)

@@ -17,6 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <nsILocalFile.h>
+#include <nsAppDirectoryServiceDefs.h>
+#include <nsDirectoryServiceDefs.h>
+#include <nsArrayEnumerator.h>
+
 #include "HulahopDirectoryProvider.h"
 
 NS_IMPL_QUERY_INTERFACE2(HulahopDirectoryProvider,
@@ -40,6 +45,25 @@ HulahopDirectoryProvider::GetFile(const char *aKey,
                                   PRBool *aPersist,
                                   nsIFile **aResult)
 {
+    nsresult rv;
+
+    if (!strcmp(aKey, NS_APP_USER_PROFILE_50_DIR) && mProfilePath) {
+        NS_ADDREF(*aResult = mProfilePath);
+        return NS_OK;
+    }
+    
+    if (!strcmp(aKey, NS_XPCOM_COMPONENT_REGISTRY_FILE) && mProfilePath) {
+        nsCOMPtr<nsIFile> file;
+        rv = mProfilePath->Clone(getter_AddRefs(file));
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+        
+        rv = file->AppendNative(nsCString("compreg.dat"));
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+        
+        NS_ADDREF(*aResult = file);
+        return NS_OK;
+    }
+        
     return NS_ERROR_FAILURE;
 }
 
@@ -47,5 +71,32 @@ NS_IMETHODIMP
 HulahopDirectoryProvider::GetFiles(const char *aKey,
                                    nsISimpleEnumerator **aResult)
 {
-    return NS_ERROR_FAILURE;
+    nsresult rv = NS_ERROR_FAILURE;
+
+    if (!strcmp(aKey, NS_XPCOM_COMPONENT_DIR_LIST)) {  
+        rv = NS_NewArrayEnumerator(aResult, mComponentsDirs);
+    } 
+
+    return rv;
 }
+
+void
+HulahopDirectoryProvider::SetProfilePath(const char *path)
+{
+    NS_NewNativeLocalFile(nsCString(path),
+                          PR_TRUE, getter_AddRefs(mProfilePath));
+}
+
+void
+HulahopDirectoryProvider::AddComponentsPath(const char *path)
+{
+    nsresult rv;
+
+    nsCOMPtr<nsILocalFile> localFile;
+    rv = NS_NewNativeLocalFile(nsCString(path),
+                               PR_TRUE, getter_AddRefs(localFile));
+    if (localFile) {
+        mComponentsDirs.AppendObject(localFile);
+    }
+}
+
