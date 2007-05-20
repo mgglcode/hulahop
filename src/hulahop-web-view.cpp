@@ -75,6 +75,8 @@ hulahop_startup()
                                     &kDirectoryProvider), nsnull, 0);
     NS_ENSURE_SUCCESS(rv, FALSE);
     
+    XRE_NotifyProfile();
+    
     return TRUE;
 }
 
