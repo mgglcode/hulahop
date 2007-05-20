@@ -36,6 +36,7 @@ typedef struct _HulahopBrowserClass       HulahopBrowserClass;
 #define HULAHOP_BROWSER_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), HULAHOP_TYPE_BROWSER, HulahopBrowserClass))
 
 gboolean  hulahop_startup             (void);
+void      hulahop_shutdown            (void);
 
 GType     hulahop_browser_get_type    (void);
 PyObject *hulahop_browser_get_browser (HulahopBrowser *browser);

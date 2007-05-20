@@ -1,5 +1,7 @@
 from hulahop import _hulahop
 
+from _hulahop import shutdown
+
 _hulahop.startup()
 
 from xpcom import components

@@ -15,3 +15,8 @@
   (c-name "hulahop_startup")
   (return-type "gboolean")
 )
+
+(define-function shutdown
+  (c-name "hulahop_shutdown")
+  (return-type "none")
+)
