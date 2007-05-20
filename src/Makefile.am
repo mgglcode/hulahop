@@ -9,6 +9,7 @@ INCLUDES =					\
 	$(PYGTK_CFLAGS)				\
 	$(MOZILLA_CFLAGS)			\
 	-I$(MOZILLA_INCLUDE_ROOT)/docshell	\
+	-I$(MOZILLA_INCLUDE_ROOT)/dom		\
 	-I$(MOZILLA_INCLUDE_ROOT)/xulapp	\
 	-I$(MOZILLA_INCLUDE_ROOT)/nspr		\
 	-I$(MOZILLA_INCLUDE_ROOT)/pyxpcom	\

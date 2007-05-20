@@ -22,6 +22,8 @@
 #include <nsCOMPtr.h>
 #include <nsIWebBrowser.h>
 #include <nsIWebBrowserFocus.h>
+#include <nsIDOMWindow2.h>
+#include <nsIDOMEventTarget.h>
 #include <nsILocalFile.h>
 #include <nsIBaseWindow.h>
 #include <nsXULAppAPI.h>
@@ -261,8 +263,28 @@ hulahop_browser_init(HulahopBrowser *browser)
 }
 
 PyObject *
-hulahop_browser_get_browser (HulahopBrowser *browser)
+hulahop_browser_get_browser(HulahopBrowser *browser)
 {
     return PyObject_FromNSInterface(browser->browser,
                                     NS_GET_IID(nsIWebBrowser));
+}
+
+PyObject *
+hulahop_browser_get_window_root(HulahopBrowser *browser)
+{
+    nsresult rv;
+
+    nsCOMPtr<nsIDOMWindow> contentWindow;
+    rv = browser->browser->GetContentDOMWindow(getter_AddRefs(contentWindow));
+    NS_ENSURE_SUCCESS(rv, NULL);
+
+    nsCOMPtr<nsIDOMWindow2> domWindow(do_QueryInterface(contentWindow));
+    NS_ENSURE_TRUE (domWindow, NULL);
+
+    nsCOMPtr<nsIDOMEventTarget> eventTarget;    
+    domWindow->GetWindowRoot(getter_AddRefs(eventTarget));
+    NS_ENSURE_TRUE (eventTarget, NULL);
+
+    return PyObject_FromNSInterface(eventTarget,
+                                    NS_GET_IID(nsIDOMEventTarget));
 }

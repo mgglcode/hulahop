@@ -24,10 +24,13 @@ class Browser(_hulahop.Browser):
     def __init__(self):
         _hulahop.Browser.__init__(self)
 
+    def get_window_root(self):
+        return _hulahop.Browser.get_window_root(self)
+
     def get_browser(self):
         return _hulahop.Browser.get_browser(self)
 
-    def get_document(self):
+    def get_window(self):
         return self.browser.contentDOMWindow
 
     def load_uri(self, uri):
@@ -35,5 +38,6 @@ class Browser(_hulahop.Browser):
         web_nav.loadURI(uri, interfaces.nsIWebNavigation.LOAD_FLAGS_NONE,
                         None, None, None)
 
-    document = property(get_document)
+    window = property(get_window)
     browser = property(get_browser)
+    window_root = property(get_window_root)

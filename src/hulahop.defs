@@ -11,6 +11,12 @@
   (return-type "none")
 )
 
+(define-method get_window_root
+  (of-object "HulahopBrowser")
+  (c-name "hulahop_browser_get_window_root")
+  (return-type "none")
+)
+
 (define-function startup
   (c-name "hulahop_startup")
   (return-type "gboolean")

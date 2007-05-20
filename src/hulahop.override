@@ -22,3 +22,10 @@ _wrap_hulahop_browser_get_browser(PyGObject *self)
     return hulahop_browser_get_browser(HULAHOP_BROWSER(self->obj));
 }
 %%
+override hulahop_browser_get_window_root noargs
+static PyObject *
+_wrap_hulahop_browser_get_window_root(PyGObject *self)
+{
+    return hulahop_browser_get_window_root(HULAHOP_BROWSER(self->obj));
+}
+%%
