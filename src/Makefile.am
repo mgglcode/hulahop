@@ -1,7 +1,7 @@
 sugardir = $(pythondir)/hulahop
 sugar_PYTHON =		\
 	__init__.py	\
-	browser.py
+	webview.py
 
 INCLUDES =					\
 	$(DEPS_CFLAGS)				\
@@ -31,8 +31,8 @@ _hulahop_la_LIBADD = 		\
 _hulahop_la_SOURCES = 			\
 	HulahopDirectoryProvider.cpp	\
 	HulahopDirectoryProvider.h	\
-	hulahop-browser.cpp		\
-	hulahop-browser.h		\
+	hulahop-web-view.cpp		\
+	hulahop-web-view.h		\
 	hulahop.c			\
 	hulahopmodule.c
 

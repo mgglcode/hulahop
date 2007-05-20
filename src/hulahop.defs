@@ -1,19 +1,19 @@
-(define-object Browser
+(define-object WebView
   (in-module "Hulahop")
   (parent "GtkBin")
-  (c-name "HulahopBrowser")
-  (gtype-id "HULAHOP_TYPE_BROWSER")
+  (c-name "HulahopWebView")
+  (gtype-id "HULAHOP_TYPE_WEB_VIEW")
 )
 
 (define-method get_browser
-  (of-object "HulahopBrowser")
-  (c-name "hulahop_browser_get_browser")
+  (of-object "HulahopWebView")
+  (c-name "hulahop_web_view_get_browser")
   (return-type "none")
 )
 
 (define-method get_window_root
-  (of-object "HulahopBrowser")
-  (c-name "hulahop_browser_get_window_root")
+  (of-object "HulahopWebView")
+  (c-name "hulahop_web_view_get_window_root")
   (return-type "none")
 )
 

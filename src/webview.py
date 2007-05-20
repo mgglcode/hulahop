@@ -20,15 +20,15 @@ from hulahop import _hulahop
 from xpcom import components
 from xpcom.components import interfaces
 
-class Browser(_hulahop.Browser):
+class WebView(_hulahop.WebView):
     def __init__(self):
-        _hulahop.Browser.__init__(self)
+        _hulahop.WebView.__init__(self)
 
     def get_window_root(self):
-        return _hulahop.Browser.get_window_root(self)
+        return _hulahop.WebView.get_window_root(self)
 
     def get_browser(self):
-        return _hulahop.Browser.get_browser(self)
+        return _hulahop.WebView.get_browser(self)
 
     def get_window(self):
         return self.browser.contentDOMWindow

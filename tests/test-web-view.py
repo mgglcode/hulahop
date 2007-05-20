@@ -1,7 +1,10 @@
 import os
 
 import gtk
+
 import hulahop
+hulahop.startup(os.path.expanduser('~/.test-hulahop'))
+from hulahop.webview import WebView
 
 from xpcom import components
 from xpcom.server.factory import Factory
@@ -26,8 +29,6 @@ def _quit(window):
     hulahop.shutdown()
     gtk.main_quit()
 
-hulahop.set_profile_path(os.path.expanduser('~/.test-hulahop'))
-
 registrar = components.registrar
 registrar.registerFactory('{64355793-988d-40a5-ba8e-fcde78cac631}"',
                           'Test Application Launcher',
@@ -43,11 +44,11 @@ branch.setBoolPref('security.warn_submit_insecure.show_once', False)
 window = gtk.Window()
 window.connect("destroy", _quit)
 
-browser = hulahop.Browser()
-browser.window_root.addEventListener('mousedown', EventListener(), False)
-browser.load_uri('http://www.google.com')
-window.add(browser)
-browser.show()
+web_view = WebView()
+web_view.window_root.addEventListener('mousedown', EventListener(), False)
+web_view.load_uri('http://www.google.com')
+window.add(web_view)
+web_view.show()
 
 window.show()
 

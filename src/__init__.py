@@ -15,9 +15,13 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from hulahop._hulahop import startup, shutdown
-from hulahop._hulahop import set_profile_path, add_components_path
+from hulahop._hulahop import shutdown
+from hulahop import _hulahop
 
-startup()
+def startup(profile_path, components_dirs=[]):
+    _hulahop.set_profile_path(profile_path)
 
-from hulahop.browser import Browser
+    for path in components_dirs:
+        _hulahop.add_components_path(path)
+        
+    _hulahop.startup()
