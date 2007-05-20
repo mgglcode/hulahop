@@ -27,13 +27,19 @@
 #include <nsXULAppAPI.h>
 #include <PyXPCOM.h>
 
+#include <gtk/gtkfixed.h>
+#include <gtk/gtkwindow.h>
+
 #include "hulahop-browser.h"
 #include "HulahopDirectoryProvider.h"
 
 struct _HulahopBrowser {
 	GtkBin base_instance;
+
 	nsCOMPtr<nsIWebBrowser>  browser;
 	nsCOMPtr<nsIBaseWindow>  base_window;
+
+    GtkWidget *offscreen_window;
 };
 
 struct _HulahopBrowserClass {
@@ -69,6 +75,21 @@ hulahop_startup()
     return TRUE;
 }
 
+static GtkWidget *
+hulahop_browser_get_offscreen_window(HulahopBrowser *browser)
+{
+    if (browser->offscreen_window == NULL) {
+        browser->offscreen_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        gtk_widget_realize(browser->offscreen_window);
+
+        GtkWidget *offscreen_fixed = gtk_fixed_new();
+        gtk_container_add(GTK_CONTAINER(browser->offscreen_window), offscreen_fixed);
+        gtk_widget_realize(offscreen_fixed);
+    }
+    
+    return browser->offscreen_window;
+}
+
 static gboolean
 child_focus_in_cb(GtkWidget      *widget,
                   GdkEventFocus  *event,
@@ -95,6 +116,17 @@ child_focus_out_cb(GtkWidget      *widget,
     webBrowserFocus->Deactivate();
 
     return FALSE;
+}
+
+static void
+hulahop_browser_unrealize(GtkWidget *widget)
+{
+    HulahopBrowser *browser = HULAHOP_BROWSER(widget);
+
+    GtkWidget *offscreen = hulahop_browser_get_offscreen_window(browser);
+    gtk_widget_reparent(GTK_BIN(widget)->child, GTK_BIN(offscreen)->child);
+    
+    GTK_WIDGET_CLASS(parent_class)->unrealize(widget);
 }
 
 static void
@@ -168,6 +200,18 @@ hulahop_browser_map(GtkWidget *widget)
 }
 
 static void
+hulahop_browser_unmap(GtkWidget *widget)
+{
+    HulahopBrowser *browser = HULAHOP_BROWSER(widget);
+
+    GTK_WIDGET_UNSET_FLAGS(widget, GTK_MAPPED);
+
+    browser->base_window->SetVisibility(PR_FALSE);
+
+    gdk_window_hide(widget->window);
+}
+
+static void
 hulahop_browser_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 {
     HulahopBrowser *browser = HULAHOP_BROWSER(widget);
@@ -183,20 +227,38 @@ hulahop_browser_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 }
 
 static void
+hulahop_browser_dispose(GObject *object)
+{
+    HulahopBrowser *browser = HULAHOP_BROWSER(object);
+    
+    if (browser->offscreen_window) {
+        gtk_widget_destroy(browser->offscreen_window);
+        browser->offscreen_window = NULL;
+    }
+}
+
+static void
 hulahop_browser_class_init(HulahopBrowserClass *browser_class)
 {
-    GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS(browser_class);
+    GObjectClass *gobject_class = G_OBJECT_CLASS(browser_class);
+    GtkWidgetClass *widget_class = GTK_WIDGET_CLASS(browser_class);
 
     parent_class = (GObjectClass *) g_type_class_peek_parent(browser_class);
 
     widget_class->realize = hulahop_browser_realize;
+    widget_class->unrealize = hulahop_browser_unrealize;    
     widget_class->map = hulahop_browser_map;
+    widget_class->unmap = hulahop_browser_unmap;
     widget_class->size_allocate = hulahop_browser_size_allocate;
+
+    gobject_class->dispose = hulahop_browser_dispose;    
 }
 
 static void
 hulahop_browser_init(HulahopBrowser *browser)
 {
+    browser->offscreen_window = NULL;
+
     GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(browser), GTK_NO_WINDOW);
 }
 
