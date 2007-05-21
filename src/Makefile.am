@@ -18,5 +18,7 @@ noinst_LTLIBRARIES = libhulahop.la
 libhulahop_la_SOURCES = 		\
 	HulahopDirectoryProvider.cpp	\
 	HulahopDirectoryProvider.h	\
+	hulahop.cpp			\
+	hulahop.h			\
 	hulahop-web-view.cpp		\
 	hulahop-web-view.h
