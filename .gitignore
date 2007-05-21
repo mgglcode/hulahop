@@ -4,6 +4,7 @@
 *.o
 Makefile
 Makefile.in
+.libs
 
 config.guess
 config.log
