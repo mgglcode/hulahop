@@ -22,6 +22,7 @@
 #include <nsXULAppAPI.h>
 
 #include "HulahopDirectoryProvider.h"
+#include "hulahop.h"
 
 static HulahopDirectoryProvider kDirectoryProvider;
 
