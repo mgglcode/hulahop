@@ -24,16 +24,13 @@
 #include <nsIWebBrowserFocus.h>
 #include <nsIDOMWindow2.h>
 #include <nsIDOMEventTarget.h>
-#include <nsILocalFile.h>
 #include <nsIBaseWindow.h>
-#include <nsXULAppAPI.h>
 #include <PyXPCOM.h>
 
 #include <gtk/gtkfixed.h>
 #include <gtk/gtkwindow.h>
 
 #include "hulahop-web-view.h"
-#include "HulahopDirectoryProvider.h"
 
 struct _HulahopWebView {
 	GtkBin base_instance;
@@ -52,51 +49,6 @@ struct _HulahopWebViewClass {
 G_DEFINE_TYPE(HulahopWebView, hulahop_web_view, GTK_TYPE_BIN)
 
 static GObjectClass *parent_class = NULL;
-
-static HulahopDirectoryProvider kDirectoryProvider;
-
-gboolean
-hulahop_startup()
-{
-    nsresult rv;
-
-    nsCOMPtr<nsILocalFile> greDir;
-    rv = NS_NewNativeLocalFile(nsCString(MOZILLA_HOME), PR_TRUE,
-                               getter_AddRefs(greDir));
-    NS_ENSURE_SUCCESS(rv, FALSE);
-
-    nsCOMPtr<nsILocalFile> binDir;
-    rv = NS_NewNativeLocalFile(nsCString(MOZILLA_HOME"/components"), PR_TRUE,
-                               getter_AddRefs(binDir));
-    NS_ENSURE_SUCCESS(rv, FALSE);
-
-    rv = XRE_InitEmbedding(greDir, binDir,
-                           NS_CONST_CAST(HulahopDirectoryProvider *,
-                                    &kDirectoryProvider), nsnull, 0);
-    NS_ENSURE_SUCCESS(rv, FALSE);
-    
-    XRE_NotifyProfile();
-    
-    return TRUE;
-}
-
-void
-hulahop_shutdown()
-{
-    XRE_TermEmbedding();
-}
-
-void
-hulahop_set_profile_path(const char *path)
-{
-    kDirectoryProvider.SetProfilePath(path);
-}
-
-void
-hulahop_add_components_path(const char *path)
-{
-    kDirectoryProvider.AddComponentsPath(path);
-}
 
 static gboolean
 child_focus_in_cb(GtkWidget      *widget,
