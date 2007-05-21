@@ -38,6 +38,7 @@ typedef struct _HulahopWebViewClass       HulahopWebViewClass;
 GType     hulahop_web_view_get_type        (void);
 PyObject *hulahop_web_view_get_browser     (HulahopWebView *web_view);
 PyObject *hulahop_web_view_get_window_root (HulahopWebView *web_view);
+PyObject *hulahop_web_view_get_doc_shell   (HulahopWebView *web_view);
 
 G_END_DECLS
 

@@ -17,6 +17,12 @@
   (return-type "none")
 )
 
+(define-method get_doc_shell
+  (of-object "HulahopWebView")
+  (c-name "hulahop_web_view_get_doc_shell")
+  (return-type "none")
+)
+
 (define-function startup
   (c-name "hulahop_startup")
   (return-type "gboolean")

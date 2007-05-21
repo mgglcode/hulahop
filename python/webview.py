@@ -30,14 +30,26 @@ class WebView(_hulahop.WebView):
     def get_browser(self):
         return _hulahop.WebView.get_browser(self)
 
+    def get_doc_shell(self):
+        return _hulahop.WebView.get_doc_shell(self)
+
+    def get_web_progress(self):
+        return self.doc_shell.queryInterface(interfaces.nsIWebProgress)
+
+    def get_web_navigation(self):
+        return self.browser.queryInterface(interfaces.nsIWebNavigation)
+
     def get_window(self):
         return self.browser.contentDOMWindow
 
     def load_uri(self, uri):
-        web_nav = self.browser.queryInterface(interfaces.nsIWebNavigation)
-        web_nav.loadURI(uri, interfaces.nsIWebNavigation.LOAD_FLAGS_NONE,
-                        None, None, None)
+        self.web_navigation.loadURI(
+                    uri, interfaces.nsIWebNavigation.LOAD_FLAGS_NONE,
+                    None, None, None)
 
     window = property(get_window)
     browser = property(get_browser)
     window_root = property(get_window_root)
+    doc_shell = property(get_doc_shell)
+    web_progress = property(get_web_progress)
+    web_navigation = property(get_web_navigation)

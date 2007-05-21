@@ -25,6 +25,8 @@
 #include <nsIDOMWindow2.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIBaseWindow.h>
+#include <nsIDocShell.h>
+#include <nsIInterfaceRequestorUtils.h>
 #include <PyXPCOM.h>
 
 #include <gtk/gtkfixed.h>
@@ -251,4 +253,16 @@ hulahop_web_view_get_window_root(HulahopWebView *web_view)
 
     return PyObject_FromNSInterface(eventTarget,
                                     NS_GET_IID(nsIDOMEventTarget));
+}
+
+PyObject *
+hulahop_web_view_get_doc_shell(HulahopWebView *web_view)
+{
+    nsresult rv;
+
+    nsCOMPtr<nsIDocShell> docShell(do_GetInterface(web_view->browser, &rv));
+    NS_ENSURE_SUCCESS (rv, NULL);
+
+    return PyObject_FromNSInterface(docShell,
+                                    NS_GET_IID(nsIDocShell));
 }
