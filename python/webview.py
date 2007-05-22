@@ -15,6 +15,8 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import gobject
+
 from hulahop import _hulahop
 
 import xpcom
@@ -24,6 +26,10 @@ from xpcom.components import interfaces
 class _Chrome:
     _com_interfaces_ = interfaces.nsIWebBrowserChrome,  \
                        interfaces.nsIEmbeddingSiteWindow
+
+    def __init__(self, web_view):
+        self.web_view = web_view
+        self.title = ''
 
     # nsIWebBrowserChrome
     def destroyBrowserWindow(self):
@@ -55,10 +61,11 @@ class _Chrome:
         pass
 
     def get_title(self):
-        return ''
+        return self.title
         
     def set_title(self, title):
-        print title
+        self.title = title
+        self.web_view._notify_title_changed()
         
     def get_visibility(self):
         return True
@@ -67,15 +74,26 @@ class _Chrome:
         pass
         
 class WebView(_hulahop.WebView):
+    __gproperties__ = {
+        'title' : (str, None, None, None,
+                   gobject.PARAM_READABLE)
+    }
     def __init__(self):
         _hulahop.WebView.__init__(self)
         
         self._chrome = xpcom.server.WrapObject(
-                _Chrome(), interfaces.nsIEmbeddingSiteWindow)
+                    _Chrome(self), interfaces.nsIEmbeddingSiteWindow)
         weak_ref = xpcom.client.WeakReference(self._chrome)
         self.browser.containerWindow = self._chrome
         
         self.create_window()
+
+    def _notify_title_changed(self):
+        self.notify('title')
+
+    def do_get_property(self, pspec):
+        if pspec.name == 'title':
+            return self._chrome.title
 
     def get_window_root(self):
         return _hulahop.WebView.get_window_root(self)
