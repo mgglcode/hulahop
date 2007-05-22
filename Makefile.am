@@ -1,3 +1,1 @@
-SUBDIRS = src python
-
-ACLOCAL_AMFLAGS = -I m4
+SUBDIRS = data src python

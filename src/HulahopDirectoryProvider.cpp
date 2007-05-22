@@ -51,7 +51,7 @@ HulahopDirectoryProvider::GetFile(const char *aKey,
         NS_ADDREF(*aResult = mProfilePath);
         return NS_OK;
     }
-    
+
     if (!strcmp(aKey, NS_XPCOM_COMPONENT_REGISTRY_FILE) && mProfilePath) {
         nsCOMPtr<nsIFile> file;
         rv = mProfilePath->Clone(getter_AddRefs(file));
@@ -59,11 +59,20 @@ HulahopDirectoryProvider::GetFile(const char *aKey,
         
         rv = file->AppendNative(nsCString("compreg.dat"));
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-        
+
         NS_ADDREF(*aResult = file);
         return NS_OK;
     }
-        
+    
+    if (!strcmp(aKey, NS_APP_PREF_DEFAULTS_50_DIR)) {
+        nsCOMPtr<nsILocalFile> dataDir;
+        NS_NewNativeLocalFile(nsCString(DATA_DIR),
+                              PR_TRUE, getter_AddRefs(dataDir));
+
+        NS_ADDREF(*aResult = dataDir);
+        return NS_OK;
+    }
+    
     return NS_ERROR_FAILURE;
 }
 

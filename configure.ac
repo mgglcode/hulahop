@@ -37,6 +37,7 @@ AC_SUBST([GECKO_LIBS])
 
 AC_OUTPUT([
 Makefile
+data/Makefile
 src/Makefile
 python/Makefile
 ])
