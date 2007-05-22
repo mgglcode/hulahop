@@ -17,12 +17,65 @@
 
 from hulahop import _hulahop
 
+import xpcom
 from xpcom import components
 from xpcom.components import interfaces
 
+class _Chrome:
+    _com_interfaces_ = interfaces.nsIWebBrowserChrome,  \
+                       interfaces.nsIEmbeddingSiteWindow
+
+    # nsIWebBrowserChrome
+    def destroyBrowserWindow(self):
+        pass
+    
+    def exitModalEventLoop(self, status):
+        pass
+        
+    def isWindowModal(self):
+        return False
+
+    def setStatus(self, statusType, status):
+        pass
+
+    def showAsModal(self):
+        pass
+        
+    def sizeBrowserTo(self, cx, cy):
+        pass
+
+    # nsIEmbeddingSiteWindow
+    def getDimensions(self, flags):
+        pass
+
+    def setDimensions(self, flags, x, y, cx, cy):
+        pass
+
+    def setFocus(self):
+        pass
+
+    def get_title(self):
+        return ''
+        
+    def set_title(self, title):
+        print title
+        
+    def get_visibility(self):
+        return True
+
+    def set_visibility(self, visibility):
+        pass
+        
 class WebView(_hulahop.WebView):
     def __init__(self):
         _hulahop.WebView.__init__(self)
+        
+        self._chrome = xpcom.server.WrapObject(
+                _Chrome(), interfaces.nsIEmbeddingSiteWindow)
+        weak_ref = xpcom.client.WeakReference(self._chrome)
+        self.browser.containerWindow = self._chrome
+        
+        self.create_window()
 
     def get_window_root(self):
         return _hulahop.WebView.get_window_root(self)

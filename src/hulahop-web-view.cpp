@@ -219,13 +219,6 @@ hulahop_web_view_init(HulahopWebView *web_view)
     rv = web_view->base_window->InitWindow(web_view->offscreen_window,
                                           nsnull, 0, 0, 100, 100);
     g_assert(NS_SUCCEEDED(rv));
-
-    rv = web_view->base_window->Create();
-    g_assert(NS_SUCCEEDED(rv));
-
-    web_view->mozilla_widget = GTK_BIN(web_view->offscreen_window)->child;
-
-    GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(web_view), GTK_NO_WINDOW);
 }
 
 PyObject *
@@ -265,4 +258,17 @@ hulahop_web_view_get_doc_shell(HulahopWebView *web_view)
 
     return PyObject_FromNSInterface(docShell,
                                     NS_GET_IID(nsIDocShell));
+}
+
+void
+hulahop_web_view_create_window(HulahopWebView *web_view)
+{
+    nsresult rv;
+
+    rv = web_view->base_window->Create();
+    g_assert(NS_SUCCEEDED(rv));
+
+    web_view->mozilla_widget = GTK_BIN(web_view->offscreen_window)->child;
+
+    GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(web_view), GTK_NO_WINDOW);
 }

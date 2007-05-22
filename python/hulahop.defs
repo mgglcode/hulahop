@@ -5,6 +5,12 @@
   (gtype-id "HULAHOP_TYPE_WEB_VIEW")
 )
 
+(define-method create_window
+  (of-object "HulahopWebView")
+  (c-name "hulahop_web_view_create_window")
+  (return-type "none")
+)
+
 (define-method get_browser
   (of-object "HulahopWebView")
   (c-name "hulahop_web_view_get_browser")
