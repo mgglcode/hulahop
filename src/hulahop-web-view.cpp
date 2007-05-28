@@ -22,6 +22,8 @@
 #include <nsCOMPtr.h>
 #include <nsIWebBrowser.h>
 #include <nsIWebBrowserFocus.h>
+#include <nsIWebBrowserChrome.h>
+#include <nsIEmbeddingSiteWindow.h>
 #include <nsIDOMWindow2.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIBaseWindow.h>
@@ -139,6 +141,16 @@ hulahop_web_view_map(GtkWidget *widget)
 
     GTK_WIDGET_SET_FLAGS(widget, GTK_MAPPED);
 
+    nsCOMPtr<nsIWebBrowserChrome> webBrowserChrome;
+    web_view->browser->GetContainerWindow(getter_AddRefs(webBrowserChrome));
+    NS_ENSURE_TRUE(webBrowserChrome, );
+
+    nsCOMPtr<nsIEmbeddingSiteWindow> embeddingSiteWindow;
+    embeddingSiteWindow = do_QueryInterface(webBrowserChrome);
+    NS_ENSURE_TRUE(embeddingSiteWindow, );
+
+    embeddingSiteWindow->SetVisibility(PR_TRUE);
+
     web_view->base_window->SetVisibility(PR_TRUE);
 
     gdk_window_show(widget->window);
@@ -150,6 +162,16 @@ hulahop_web_view_unmap(GtkWidget *widget)
     HulahopWebView *web_view = HULAHOP_WEB_VIEW(widget);
 
     GTK_WIDGET_UNSET_FLAGS(widget, GTK_MAPPED);
+
+    nsCOMPtr<nsIWebBrowserChrome> webBrowserChrome;
+    web_view->browser->GetContainerWindow(getter_AddRefs(webBrowserChrome));
+    NS_ENSURE_TRUE(webBrowserChrome, );
+
+    nsCOMPtr<nsIEmbeddingSiteWindow> embeddingSiteWindow;
+    embeddingSiteWindow = do_QueryInterface(webBrowserChrome);
+    NS_ENSURE_TRUE(embeddingSiteWindow, );
+
+    embeddingSiteWindow->SetVisibility(PR_FALSE);
 
     web_view->base_window->SetVisibility(PR_FALSE);
 
