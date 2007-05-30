@@ -48,7 +48,7 @@ class _Chrome:
 
     def setStatus(self, statusType, status):
         #logging.debug("nsIWebBrowserChrome.setStatus")
-        pass
+        self.web_view._set_status(status.encode('utf-8'))
 
     def showAsModal(self):
         logging.debug("nsIWebBrowserChrome.showAsModal")
@@ -134,6 +134,8 @@ class WebView(_hulahop.WebView):
 
     __gproperties__ = {
         'title' : (str, None, None, None,
+                   gobject.PARAM_READABLE),
+        'status' : (str, None, None, None,
                    gobject.PARAM_READABLE)
     }
     def __init__(self):
@@ -149,14 +151,22 @@ class WebView(_hulahop.WebView):
         item = self.browser.queryInterface(interfaces.nsIDocShellTreeItem)
         item.itemType = interfaces.nsIDocShellTreeItem.typeContentWrapper
 
+        self._status = ''
+        
         self.create_window()
 
     def _notify_title_changed(self):
         self.notify('title')
 
+    def _set_status(self, status):
+        self._status = status
+        self.notify('status')
+
     def do_get_property(self, pspec):
         if pspec.name == 'title':
             return self._chrome.title
+        elif pspec.name == 'status':
+            return self._status
 
     def get_window_root(self):
         return _hulahop.WebView.get_window_root(self)
