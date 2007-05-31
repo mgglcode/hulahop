@@ -15,6 +15,8 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import os
+
 import gtk
 
 from hulahop._hulahop import shutdown
@@ -24,6 +26,11 @@ _XO_DPI = 200.0
 
 def startup(profile_path, components_dirs=[]):
     _hulahop.set_profile_path(profile_path)
+    if not os.path.isdir(profile_path):
+        try:
+            os.makedirs(profile_path)
+        except OSError, exc:
+            raise RuntimeError('Could not create user directory.')
 
     for path in components_dirs:
         _hulahop.add_components_path(path)
