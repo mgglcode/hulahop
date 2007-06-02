@@ -26,10 +26,27 @@
 
 static HulahopDirectoryProvider kDirectoryProvider;
 
+static void
+setup_plugin_path()
+{
+    const char *user_path;
+    char *new_path;
+
+    user_path = g_getenv ("MOZ_PLUGIN_PATH");
+    new_path = g_strconcat(user_path ? user_path : "",
+                           user_path ? ":" : "",
+                           PLUGIN_PATH,
+                           (char *) NULL);
+    g_setenv ("MOZ_PLUGIN_PATH", new_path, TRUE);
+    g_free (new_path);
+}
+
 gboolean
 hulahop_startup()
 {
     nsresult rv;
+
+    setup_plugin_path();
 
     nsCOMPtr<nsILocalFile> greDir;
     rv = NS_NewNativeLocalFile(nsCString(MOZILLA_HOME), PR_TRUE,

@@ -22,7 +22,7 @@ import gtk
 from hulahop._hulahop import shutdown
 from hulahop import _hulahop
 
-_XO_DPI = 200.0
+_XO_DPI = 200
 
 def startup(profile_path, components_dirs=[]):
     _hulahop.set_profile_path(profile_path)
@@ -45,10 +45,11 @@ def startup(profile_path, components_dirs=[]):
     branch.setIntPref('layout.css.dpi', _get_layout_dpi())
 
 def _get_layout_dpi():
-    _screen_dpi = gtk.settings_get_default().get_property('gtk-xft-dpi')
+    gtk_xft_dpi = gtk.settings_get_default().get_property('gtk-xft-dpi')
+    screen_dpi = gtk_xft_dpi / 1024
     screen_width = gtk.gdk.screen_width()
 
-    if _screen_dpi != _XO_DPI or screen_width != 1200:
+    if screen_dpi != _XO_DPI or screen_width != 1200:
         return -1
 
     # Layout:
