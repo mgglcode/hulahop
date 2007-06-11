@@ -202,6 +202,11 @@ hulahop_web_view_dispose(GObject *object)
         gtk_widget_destroy(web_view->offscreen_window);
         web_view->offscreen_window = NULL;
     }
+    
+    if (web_view->base_window) {
+        web_view->base_window->Destroy();
+        web_view->base_window = NULL;
+    }
 }
 
 static void

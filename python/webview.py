@@ -27,23 +27,32 @@ from xpcom.nsError import *
 
 class _Chrome:
     _com_interfaces_ = interfaces.nsIWebBrowserChrome,      \
+                       interfaces.nsIWebBrowserChrome2,     \
                        interfaces.nsIEmbeddingSiteWindow,   \
                        interfaces.nsIInterfaceRequestor
 
     def __init__(self, web_view):
         self.web_view = web_view
         self.title = ''
-        self._visibility = False
-    
+
     # nsIWebBrowserChrome
     def destroyBrowserWindow(self):
         logging.debug("nsIWebBrowserChrome.destroyBrowserWindow")
+        self.web_view.get_toplevel().destroy()
     
     def exitModalEventLoop(self, status):
-        logging.debug("nsIWebBrowserChrome.exitModalEventLoop")
-        
+        logging.debug("UNIMPLEMENTED: nsIWebBrowserChrome.exitModalEventLoop")
+        """
+        if self._modal:
+            self.web_view.get_toplevel().grab_remove()
+            self._modal = False
+            gtk.main_quit()
+
+            #self.web_view.pop_js_context()
+        """
+
     def isWindowModal(self):
-        logging.debug("nsIWebBrowserChrome.isWindowModal")
+        logging.debug("UNIMPLEMENTED: nsIWebBrowserChrome.isWindowModal")
         return False
 
     def setStatus(self, statusType, status):
@@ -51,12 +60,24 @@ class _Chrome:
         self.web_view._set_status(status.encode('utf-8'))
 
     def showAsModal(self):
-        logging.debug("nsIWebBrowserChrome.showAsModal")
+        logging.debug("UNIMPLEMENTED: nsIWebBrowserChrome.showAsModal")
+        """
+        self._modal = True
+        self.web_view.get_toplevel().grab_add()
+        
+        #self.web_view.push_js_context()
+        import time; time.sleep(5)
+        gtk.main()
+        """
         
     def sizeBrowserTo(self, cx, cy):
         logging.debug("nsIWebBrowserChrome.sizeBrowserTo: %r %r" % (cx, cy))
         self.web_view.get_toplevel().resize(cx, cy)
         self.web_view.type = WebView.TYPE_POPUP
+
+    # nsIWebBrowserChrome2
+    def setStatusWithContext(self, statusType, statusText, statusContext):
+        self.web_view._set_status(statusText.encode('utf-8'))
 
     # nsIEmbeddingSiteWindow
     def getDimensions(self, flags):
@@ -94,22 +115,22 @@ class _Chrome:
         self.web_view._notify_title_changed()
         
     def get_visibility(self):
-        logging.debug("nsIEmbeddingSiteWindow.get_visibility: %r" % self._visibility)
-        return self._visibility
+        #logging.debug("nsIEmbeddingSiteWindow.get_visibility: %r" % self.web_view.get_toplevel().props.visible)
+        return self.web_view.get_toplevel().props.visible
 
     def set_visibility(self, visibility):
         logging.debug("nsIEmbeddingSiteWindow.set_visibility: %r" % visibility)
-        if self._visibility != visibility:
-            self._visibility = visibility
-            if self._visibility:
-                self.web_view.get_toplevel().show()
-            else:
-                self.web_view.get_toplevel().hide()
+        if visibility:
+            self.web_view.show()
+            self.web_view.get_toplevel().show()
+        else:
+            self.web_view.get_toplevel().hide()
 
+    # nsIInterfaceRequestor
     def queryInterface(self, uuid):
         if not uuid in self._com_interfaces_:
             # Components.returnCode = Cr.NS_ERROR_NO_INTERFACE;
-            logging.error('Interface %s not implemented by this instance: %r' % (uuid, self))
+            logging.warning('Interface %s not implemented by this instance: %r' % (uuid, self))
             return None
         return xpcom.server.WrapObject(self, uuid)
 
@@ -122,7 +143,7 @@ class _Chrome:
             try:
                 result = requestor.getInterface(uuid)
             except xpcom.Exception:
-                logging.error('Interface %s not implemented by this instance: %r' % (uuid, self.web_view.browser))
+                logging.warning('Interface %s not implemented by this instance: %r' % (uuid, self.web_view.browser))
                 result = None
 
         return result
@@ -147,12 +168,9 @@ class WebView(_hulahop.WebView):
                     _Chrome(self), interfaces.nsIEmbeddingSiteWindow)
         weak_ref = xpcom.client.WeakReference(self._chrome)
         self.browser.containerWindow = self._chrome
-        
-        item = self.browser.queryInterface(interfaces.nsIDocShellTreeItem)
-        item.itemType = interfaces.nsIDocShellTreeItem.typeContentWrapper
 
         self._status = ''
-        
+
         self.create_window()
 
     def _notify_title_changed(self):
