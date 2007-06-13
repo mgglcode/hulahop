@@ -29,10 +29,3 @@ _wrap_hulahop_web_view_get_window_root(PyGObject *self)
     return hulahop_web_view_get_window_root(HULAHOP_WEB_VIEW(self->obj));
 }
 %%
-override hulahop_web_view_get_doc_shell noargs
-static PyObject *
-_wrap_hulahop_web_view_get_doc_shell(PyGObject *self)
-{
-    return hulahop_web_view_get_doc_shell(HULAHOP_WEB_VIEW(self->obj));
-}
-%%

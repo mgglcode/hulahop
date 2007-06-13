@@ -193,7 +193,8 @@ class WebView(_hulahop.WebView):
         return _hulahop.WebView.get_browser(self)
 
     def get_doc_shell(self):
-        return _hulahop.WebView.get_doc_shell(self)
+        requestor = self.browser.queryInterface(interfaces.nsIInterfaceRequestor)
+        return requestor.getInterface(interfaces.nsIDocShell)
 
     def get_web_progress(self):
         return self.doc_shell.queryInterface(interfaces.nsIWebProgress)
