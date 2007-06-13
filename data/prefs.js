@@ -1,3 +1,6 @@
+// Disable links prefetch
+user_pref("network.prefetch-next", false);
+
 // Disable onload popups
 pref("dom.disable_open_during_load", true);
 
