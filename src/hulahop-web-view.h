@@ -36,6 +36,8 @@ typedef struct _HulahopWebViewClass       HulahopWebViewClass;
 #define HULAHOP_WEB_VIEW_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), HULAHOP_TYPE_WEB_VIEW, HulahopWebViewClass))
 
 GType     hulahop_web_view_get_type        (void);
+void      hulahop_web_view_grab_focus      (HulahopWebView *web_view);
+
 void      hulahop_web_view_create_window   (HulahopWebView *web_view);
 PyObject *hulahop_web_view_get_browser     (HulahopWebView *web_view);
 PyObject *hulahop_web_view_get_window_root (HulahopWebView *web_view);

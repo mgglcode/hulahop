@@ -299,3 +299,11 @@ hulahop_web_view_create_window(HulahopWebView *web_view)
 
     GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(web_view), GTK_NO_WINDOW);
 }
+
+void
+hulahop_web_view_grab_focus(HulahopWebView *web_view)
+{
+    if (web_view->mozilla_widget) {
+        gtk_widget_grab_focus(web_view->mozilla_widget);
+    }
+}
