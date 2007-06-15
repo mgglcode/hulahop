@@ -202,7 +202,7 @@ class WebView(_hulahop.WebView):
     def get_web_navigation(self):
         return self.browser.queryInterface(interfaces.nsIWebNavigation)
 
-    def get_window(self):
+    def get_dom_window(self):
         return self.browser.contentDOMWindow
 
     def load_uri(self, uri):
@@ -210,7 +210,7 @@ class WebView(_hulahop.WebView):
                     uri, interfaces.nsIWebNavigation.LOAD_FLAGS_NONE,
                     None, None, None)
 
-    window = property(get_window)
+    dom_window = property(get_dom_window)
     browser = property(get_browser)
     window_root = property(get_window_root)
     doc_shell = property(get_doc_shell)
