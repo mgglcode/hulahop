@@ -29,47 +29,65 @@ class _Chrome:
     _com_interfaces_ = interfaces.nsIWebBrowserChrome,      \
                        interfaces.nsIWebBrowserChrome2,     \
                        interfaces.nsIEmbeddingSiteWindow,   \
+                       interfaces.nsIWebProgressListener,   \
                        interfaces.nsIInterfaceRequestor
 
     def __init__(self, web_view):
         self.web_view = web_view
         self.title = ''
+        self._modal = False
 
     # nsIWebBrowserChrome
     def destroyBrowserWindow(self):
         logging.debug("nsIWebBrowserChrome.destroyBrowserWindow")
+        if self._modal:
+            self.exitModalEventLoop(0)
         self.web_view.get_toplevel().destroy()
     
     def exitModalEventLoop(self, status):
-        logging.debug("UNIMPLEMENTED: nsIWebBrowserChrome.exitModalEventLoop")
+        logging.debug("nsIWebBrowserChrome.exitModalEventLoop: %r" % status)
+        """
+        if self._continue_modal_loop:
+            self.enable_parent(True)
         """
         if self._modal:
-            self.web_view.get_toplevel().grab_remove()
+            self._continue_modal_loop = False
             self._modal = False
-            gtk.main_quit()
-
-            #self.web_view.pop_js_context()
-        """
+            self._modal_status = status
+            #self.web_view.get_toplevel().grab_remove()
 
     def isWindowModal(self):
-        logging.debug("UNIMPLEMENTED: nsIWebBrowserChrome.isWindowModal")
-        return False
+        logging.debug("nsIWebBrowserChrome.isWindowModal")
+        return self._modal
 
     def setStatus(self, statusType, status):
         #logging.debug("nsIWebBrowserChrome.setStatus")
         self.web_view._set_status(status.encode('utf-8'))
 
     def showAsModal(self):
-        logging.debug("UNIMPLEMENTED: nsIWebBrowserChrome.showAsModal")
-        """
+        logging.debug("nsIWebBrowserChrome.showAsModal")
         self._modal = True
-        self.web_view.get_toplevel().grab_add()
-        
-        #self.web_view.push_js_context()
-        import time; time.sleep(5)
-        gtk.main()
-        """
-        
+        self._continue_modal_loop = True
+        self._modal_status = None
+        #EnableParent(PR_FALSE);
+        #self.web_view.get_toplevel().grab_add()
+
+        cls = components.classes["@mozilla.org/thread-manager;1"]
+        thread_manager = cls.getService(interfaces.nsIThreadManager)
+        current_thread = thread_manager.currentThread
+
+        self.web_view.push_js_context()
+        while self._continue_modal_loop:
+            processed = current_thread.processNextEvent(True)
+            if not processed:
+                break
+        self.web_view.pop_js_context()
+
+        self._modal = False
+        self._continue_modal_loop = False
+
+        return self._modal_status
+
     def sizeBrowserTo(self, cx, cy):
         logging.debug("nsIWebBrowserChrome.sizeBrowserTo: %r %r" % (cx, cy))
         self.web_view.get_toplevel().resize(cx, cy)
@@ -126,6 +144,18 @@ class _Chrome:
         else:
             self.web_view.get_toplevel().hide()
 
+    # nsIWebProgressListener
+    def onStateChange(self, web_progress, request, state_flags, status):
+        if (state_flags & interfaces.nsIWebProgressListener.STATE_STOP) and \
+                (state_flags & interfaces.nsIWebProgressListener.STATE_IS_NETWORK):
+            if self.web_view.is_chrome:
+                self.web_view.dom_window.sizeToContent()
+
+    def onStatusChange(self, web_progress, request, status, message): pass
+    def onSecurityChange(self, web_progress, request, state): pass
+    def onProgressChange(self, web_progress, request, cur_self_progress, max_self_progress, cur_total_progress, max_total_progress): pass
+    def onLocationChange(self, web_progress, request, location): pass
+
     # nsIInterfaceRequestor
     def queryInterface(self, uuid):
         if not uuid in self._com_interfaces_:
@@ -147,7 +177,7 @@ class _Chrome:
                 result = None
 
         return result
-        
+
 class WebView(_hulahop.WebView):
 
     TYPE_WINDOW = 0
@@ -163,11 +193,19 @@ class WebView(_hulahop.WebView):
         _hulahop.WebView.__init__(self)
         
         self.type = WebView.TYPE_WINDOW
+        self.is_chrome = False
         
-        self._chrome = xpcom.server.WrapObject(
-                    _Chrome(self), interfaces.nsIEmbeddingSiteWindow)
+        chrome = _Chrome(self)
+
+        self._chrome = xpcom.server.WrapObject(chrome, interfaces.nsIEmbeddingSiteWindow)
         weak_ref = xpcom.client.WeakReference(self._chrome)
         self.browser.containerWindow = self._chrome
+
+        listener = xpcom.server.WrapObject(chrome, interfaces.nsIWebProgressListener)
+        weak_ref2 = xpcom.client.WeakReference(listener)
+        # FIXME: weak_ref2._comobj_ looks quite a bit ugly.
+        self.browser.addWebBrowserListener(weak_ref2._comobj_,
+                                           interfaces.nsIWebProgressListener)
 
         self._status = ''
 

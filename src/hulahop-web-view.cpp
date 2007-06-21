@@ -28,6 +28,8 @@
 #include <nsIDOMEventTarget.h>
 #include <nsIBaseWindow.h>
 #include <nsIInterfaceRequestorUtils.h>
+#include <jscntxt.h>
+#include <nsIJSContextStack.h>
 #include <PyXPCOM.h>
 
 #include <gtk/gtkfixed.h>
@@ -294,3 +296,20 @@ hulahop_web_view_grab_focus(HulahopWebView *web_view)
         gtk_widget_grab_focus(web_view->mozilla_widget);
     }
 }
+
+void
+hulahop_web_view_push_js_context (HulahopWebView *web_view)
+{
+    nsCOMPtr<nsIJSContextStack> stack(do_GetService("@mozilla.org/js/xpc/ContextStack;1"));
+    nsresult rv = stack->Push(nsnull);
+    g_assert(NS_SUCCEEDED(rv));
+}
+
+void
+hulahop_web_view_pop_js_context (HulahopWebView *web_view)
+{
+    nsCOMPtr<nsIJSContextStack> stack(do_GetService("@mozilla.org/js/xpc/ContextStack;1"));
+    nsresult rv = stack->Pop(nsnull);
+    g_assert(NS_SUCCEEDED(rv));
+}
+

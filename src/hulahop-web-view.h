@@ -42,6 +42,9 @@ void      hulahop_web_view_create_window   (HulahopWebView *web_view);
 PyObject *hulahop_web_view_get_browser     (HulahopWebView *web_view);
 PyObject *hulahop_web_view_get_window_root (HulahopWebView *web_view);
 
+void      hulahop_web_view_push_js_context (HulahopWebView *web_view);
+void      hulahop_web_view_pop_js_context  (HulahopWebView *web_view);
+
 G_END_DECLS
 
 #endif

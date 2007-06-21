@@ -54,3 +54,16 @@
   )
   (return-type "none")
 )
+
+(define-method push_js_context
+  (of-object "HulahopWebView")
+  (c-name "hulahop_web_view_push_js_context")
+  (return-type "none")
+)
+
+(define-method pop_js_context
+  (of-object "HulahopWebView")
+  (c-name "hulahop_web_view_pop_js_context")
+  (return-type "none")
+)
+
