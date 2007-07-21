@@ -19,6 +19,7 @@ pref("security.warn_entering_weak.show_once", false);
 // Set some style properties to not follow our dark gtk theme
 pref("ui.-moz-field", "#FFFFFF");
 pref("ui.-moz-fieldtext", "#000000");
+pref("ui.-moz-dialog", "#C0C0C0");
 pref("ui.buttonface", "#D3D3DD");
 pref("ui.buttontext", "#000000");
 
