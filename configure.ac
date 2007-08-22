@@ -42,4 +42,5 @@ Makefile
 data/Makefile
 src/Makefile
 python/Makefile
+python/config.py
 ])

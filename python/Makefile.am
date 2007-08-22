@@ -1,7 +1,8 @@
 sugardir = $(pythondir)/hulahop
 sugar_PYTHON =		\
 	__init__.py	\
-	webview.py
+	webview.py	\
+	config.py
 
 INCLUDES =					\
 	$(DEPS_CFLAGS)				\
@@ -23,8 +24,8 @@ _hulahop_la_SOURCES = 			\
 
 hulahop.c: hulahop.defs hulahop.override
 
-CLEANFILES = hulahop.c
-EXTRA_DIST = hulahop.override hulahop.defs
+CLEANFILES = hulahop.c config.py
+EXTRA_DIST = hulahop.override hulahop.defs config.py.in
 
 .defs.c:
 	(cd $(srcdir)\
