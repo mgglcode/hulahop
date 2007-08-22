@@ -25,7 +25,6 @@ PKG_CHECK_MODULES([LIBXUL],[libxul])
 
 # FIXME To be able to use pyxpcom we currently need
 # to link to xpcom at build time. Which involves various hacks.
-LIBXUL_PREFIX=`$PKG_CONFIG --variable=prefix libxul`
 LIBXUL_SDK_DIR=`$PKG_CONFIG --variable=sdkdir libxul`
 LIBXUL_DIR=`echo $LIBXUL_SDK_DIR | sed -e 's/-devel//'`
 LIBXUL_LIBS="$LIBXUL_LIBS -L$LIBXUL_DIR -lpyxpcom"
