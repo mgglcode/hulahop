@@ -1,5 +1,4 @@
-sugardir = $(pythondir)/hulahop
-sugar_PYTHON =		\
+pkgpyexec_PYTHON =	\
 	__init__.py	\
 	webview.py	\
 	config.py
