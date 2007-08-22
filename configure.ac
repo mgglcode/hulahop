@@ -27,8 +27,7 @@ PKG_CHECK_MODULES([LIBXUL],[libxul])
 # to link to xpcom at build time. Which involves various hacks.
 LIBXUL_PREFIX=`$PKG_CONFIG --variable=prefix libxul`
 LIBXUL_SDK_DIR=`$PKG_CONFIG --variable=sdkdir libxul`
-LIBXUL_VERSION=`$PKG_CONFIG --modversion libxul`
-LIBXUL_DIR=$LIBXUL_PREFIX/lib/xulrunner-$LIBXUL_VERSION
+LIBXUL_DIR=`echo $LIBXUL_SDK_DIR | sed -e 's/-devel//'`
 LIBXUL_LIBS="$LIBXUL_LIBS -L$LIBXUL_DIR -lpyxpcom"
 
 LIBXUL_CFLAGS=`$PKG_CONFIG --cflags --define-variable=includetype=unstable libxul`
