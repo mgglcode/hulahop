@@ -11,12 +11,10 @@ INCLUDES =					\
 
 pkgpyexec_LTLIBRARIES = _hulahop.la
 
-_hulahop_la_LDFLAGS = -module -avoid-version -R$(MOZILLA_HOME) -dlopen self
+_hulahop_la_LDFLAGS = -module -avoid-version -R$(LIBXUL_DIR) -dlopen self
 _hulahop_la_LIBADD = 				\
-	$(GECKO_LIBS)				\
+	$(LIBXUL_LIBS)				\
 	$(DEPS_LIBS)				\
-	$(MOZILLA_EXTRA_LIBS)			\
-	$(MOZILLA_GLUE_LIBS)			\
 	$(top_builddir)/src/libhulahop.la
 
 _hulahop_la_SOURCES = 			\

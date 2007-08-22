@@ -21,20 +21,21 @@ PKG_CHECK_MODULES(PYGTK, pygtk-2.0)
 PYGTK_DEFSDIR=`$PKG_CONFIG --variable=defsdir pygtk-2.0`
 AC_SUBST(PYGTK_DEFSDIR)
 
-GECKO_INIT([MOZILLA])
-AC_SUBST(MOZILLA_INCLUDE_ROOT)
-AC_SUBST([MOZILLA_HOME])
-AC_SUBST([MOZILLA_EXTRA_LIBS])
-AC_SUBST([MOZILLA_GLUE_LIBS])
-AC_SUBST([AM_CXXFLAGS])
+PKG_CHECK_MODULES([LIBXUL],[libxul])
 
-GECKO_XPIDL()
-AC_SUBST([XPIDL])
-AC_SUBST([XPIDL_IDLDIR])
+# FIXME To be able to use pyxpcom we currently need
+# to link to xpcom at build time. Which involves various hacks.
+LIBXUL_PREFIX=`$PKG_CONFIG --variable=prefix libxul`
+LIBXUL_SDK_DIR=`$PKG_CONFIG --variable=sdkdir libxul`
+LIBXUL_VERSION=`$PKG_CONFIG --modversion libxul`
+LIBXUL_DIR=$LIBXUL_PREFIX/lib/xulrunner-$LIBXUL_VERSION
+LIBXUL_LIBS="$LIBXUL_LIBS -L$LIBXUL_DIR -lpyxpcom"
 
-PKG_CHECK_MODULES([GECKO],[${gecko_cv_gecko}-xpcom >= 1.9 ${gecko_cv_gecko}-js $gecko_cv_extra_pkg_dependencies])
-AC_SUBST([GECKO_CFLAGS])
-AC_SUBST([GECKO_LIBS])
+LIBXUL_CFLAGS=`$PKG_CONFIG --cflags --define-variable=includetype=unstable libxul`
+
+AC_SUBST([LIBXUL_CFLAGS])
+AC_SUBST([LIBXUL_LIBS])
+AC_SUBST([LIBXUL_DIR])
 
 AC_OUTPUT([
 Makefile

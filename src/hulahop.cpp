@@ -49,12 +49,12 @@ hulahop_startup()
     setup_plugin_path();
 
     nsCOMPtr<nsILocalFile> greDir;
-    rv = NS_NewNativeLocalFile(nsCString(MOZILLA_HOME), PR_TRUE,
+    rv = NS_NewNativeLocalFile(nsCString(LIBXUL_DIR), PR_TRUE,
                                getter_AddRefs(greDir));
     NS_ENSURE_SUCCESS(rv, FALSE);
 
     nsCOMPtr<nsILocalFile> binDir;
-    rv = NS_NewNativeLocalFile(nsCString(MOZILLA_HOME"/components"), PR_TRUE,
+    rv = NS_NewNativeLocalFile(nsCString(LIBXUL_DIR"/components"), PR_TRUE,
                                getter_AddRefs(binDir));
     NS_ENSURE_SUCCESS(rv, FALSE);
 
