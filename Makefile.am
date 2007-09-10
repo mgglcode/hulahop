@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4
+
 SUBDIRS = data src python
 
 EXTRA_DIST = COPYING
