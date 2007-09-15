@@ -36,6 +36,7 @@ class _Chrome:
         self.web_view = web_view
         self.title = ''
         self._modal = False
+        self._chrome_flags = interfaces.nsIWebBrowserChrome.CHROME_ALL
 
     # nsIWebBrowserChrome
     def destroyBrowserWindow(self):
@@ -135,6 +136,12 @@ class _Chrome:
     def get_visibility(self):
         #logging.debug("nsIEmbeddingSiteWindow.get_visibility: %r" % self.web_view.get_toplevel().props.visible)
         return self.web_view.get_toplevel().props.visible
+
+    def get_chromeFlags(self):
+        return self._chrome_flags
+
+    def set_chromeFlags(self, flags):
+        self._chrome_flags = flags
 
     def set_visibility(self, visibility):
         logging.debug("nsIEmbeddingSiteWindow.set_visibility: %r" % visibility)
