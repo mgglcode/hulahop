@@ -59,8 +59,8 @@ hulahop_startup()
     NS_ENSURE_SUCCESS(rv, FALSE);
 
     rv = XRE_InitEmbedding(greDir, binDir,
-                           NS_CONST_CAST(HulahopDirectoryProvider *,
-                                    &kDirectoryProvider), nsnull, 0);
+                           const_cast<HulahopDirectoryProvider *>
+                                    (&kDirectoryProvider), nsnull, 0);
     NS_ENSURE_SUCCESS(rv, FALSE);
     
     XRE_NotifyProfile();
