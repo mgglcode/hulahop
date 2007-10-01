@@ -1,3 +1,6 @@
+* Supress warning for about:config (erikos)
+* Make history 50 elements max (erikos)
+
 Snapshot 57693bd828
 
 * Make it work with the latest xulrunner. (marco)

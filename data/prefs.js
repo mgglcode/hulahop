@@ -88,3 +88,11 @@ pref("font.size.fixed.zh-HK", 12);
 
 // Enable error pages (xulrunner is missing this pref)
 pref("browser.xul.error_pages.enabled", true);
+
+// Set this to not show messages about loaded guns when about:config 
+pref("general.warnOnAboutConfig", false);
+
+// Set the maximum history entries to 50
+pref("browser.sessionhistory.max_entries", 50);
+
+
