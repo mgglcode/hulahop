@@ -30,6 +30,7 @@ class _Chrome:
                        interfaces.nsIWebBrowserChrome2,     \
                        interfaces.nsIEmbeddingSiteWindow,   \
                        interfaces.nsIWebProgressListener,   \
+                       interfaces.nsIWindowProvider,        \
                        interfaces.nsIInterfaceRequestor
 
     def __init__(self, web_view):
@@ -37,6 +38,10 @@ class _Chrome:
         self.title = ''
         self._modal = False
         self._chrome_flags = interfaces.nsIWebBrowserChrome.CHROME_ALL
+
+    def provideWindow(self, parent, flags, position_specified,
+                      size_specified, uri, name, features):
+        return parent, False
 
     # nsIWebBrowserChrome
     def destroyBrowserWindow(self):
