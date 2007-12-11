@@ -1,4 +1,4 @@
-AC_INIT([hulahop],[0.3],[],[hulahop])
+AC_INIT([hulahop],[0.4.0],[],[hulahop])
 
 AC_PREREQ([2.59])
 
