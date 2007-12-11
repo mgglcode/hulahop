@@ -95,4 +95,8 @@ pref("general.warnOnAboutConfig", false);
 // Set the maximum history entries to 50
 pref("browser.sessionhistory.max_entries", 50);
 
-
+// Add vendor useragent string
+pref("general.useragent.locale", "en-US");
+pref("general.useragent.vendor", "OLPC");
+pref("general.useragent.vendorSub", "Update.1");
+pref("general.useragent.vendorComment", "XO");
