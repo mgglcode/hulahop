@@ -30,6 +30,8 @@
 #include <nsIInterfaceRequestorUtils.h>
 #include <jscntxt.h>
 #include <nsIJSContextStack.h>
+#include <nsIScriptGlobalObject.h>
+#include <nsIScriptContext.h>
 #include <PyXPCOM.h>
 
 #include <gtk/gtkfixed.h>
@@ -298,7 +300,7 @@ hulahop_web_view_grab_focus(HulahopWebView *web_view)
 }
 
 void
-hulahop_web_view_push_js_context (HulahopWebView *web_view)
+hulahop_web_view_push_js_context(HulahopWebView *web_view)
 {
     nsCOMPtr<nsIJSContextStack> stack(do_GetService("@mozilla.org/js/xpc/ContextStack;1"));
     nsresult rv = stack->Push(nsnull);
@@ -306,10 +308,28 @@ hulahop_web_view_push_js_context (HulahopWebView *web_view)
 }
 
 void
-hulahop_web_view_pop_js_context (HulahopWebView *web_view)
+hulahop_web_view_pop_js_context(HulahopWebView *web_view)
 {
     nsCOMPtr<nsIJSContextStack> stack(do_GetService("@mozilla.org/js/xpc/ContextStack;1"));
     nsresult rv = stack->Pop(nsnull);
     g_assert(NS_SUCCEEDED(rv));
 }
 
+void
+hulahop_web_view_evaluate_script(HulahopWebView *web_view, const char *script)
+{
+    nsresult rv;
+
+    nsCOMPtr<nsIDOMWindow> contentWindow;
+    rv = web_view->browser->GetContentDOMWindow(getter_AddRefs(contentWindow));
+    NS_ENSURE_SUCCESS(rv,);
+
+    nsCOMPtr<nsIScriptGlobalObject> globalObject = do_QueryInterface(contentWindow);
+	NS_ENSURE_TRUE(globalObject,);
+
+	nsIScriptContext *context = globalObject->GetContext();
+	NS_ENSURE_TRUE(context,);
+
+    context->EvaluateString(NS_ConvertUTF8toUTF16(script), nsnull, nsnull,
+                            nsnull, 0, nsnull, nsnull, nsnull);  
+}

@@ -67,3 +67,12 @@
   (return-type "none")
 )
 
+(define-method evaluate_script
+  (of-object "HulahopWebView")
+  (c-name "hulahop_web_view_evaluate_script")
+  (parameters
+    '("gchar*" "script")
+  )
+  (return-type "none")
+)
+
