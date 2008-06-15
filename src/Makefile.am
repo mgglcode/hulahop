@@ -4,7 +4,8 @@ INCLUDES =						\
 	$(LIBXUL_CFLAGS)				\
 	-DPLUGIN_PATH=\"$(libdir)/mozilla/plugins\"     \
 	-DLIBXUL_DIR=\"$(LIBXUL_DIR)\"			\
-	-DDATA_DIR=\"$(pkgdatadir)\"
+	-DDATA_DIR=\"$(pkgdatadir)\"			\
+	-DLIB_DIR=\"$(pkglibdir)\"
 
 noinst_LTLIBRARIES = libhulahop.la
 

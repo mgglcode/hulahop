@@ -34,10 +34,13 @@ LIBXUL_CFLAGS=`$PKG_CONFIG --cflags --define-variable=includetype=unstable libxu
 AC_SUBST([LIBXUL_CFLAGS])
 AC_SUBST([LIBXUL_LIBS])
 AC_SUBST([LIBXUL_DIR])
+AC_SUBST([LIBXUL_SDK_DIR])
 
 AC_OUTPUT([
 Makefile
+components/Makefile
 data/Makefile
+data/chrome/Makefile
 src/Makefile
 python/Makefile
 python/config.py

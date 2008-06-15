@@ -1,0 +1,7 @@
+#include "nsISupports.idl"
+#include "nsIDOMWindow.idl"
+
+[scriptable, uuid(4117128f-0e50-4863-b7a7-40a853451cc0)]
+interface hulahopAddCertException : nsISupports {
+  void showDialog (in nsIDOMWindow aWindow);
+};

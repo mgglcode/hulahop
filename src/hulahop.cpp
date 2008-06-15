@@ -48,6 +48,8 @@ hulahop_startup()
 
     setup_plugin_path();
 
+    hulahop_add_components_path(LIB_DIR"/components");
+
     nsCOMPtr<nsILocalFile> greDir;
     rv = NS_NewNativeLocalFile(nsCString(LIBXUL_DIR), PR_TRUE,
                                getter_AddRefs(greDir));
@@ -61,8 +63,8 @@ hulahop_startup()
     rv = XRE_InitEmbedding(greDir, binDir,
                            const_cast<HulahopDirectoryProvider *>
                                     (&kDirectoryProvider), nsnull, 0);
-    NS_ENSURE_SUCCESS(rv, FALSE);
-    
+    NS_ENSURE_SUCCESS(rv, FALSE); 
+   
     XRE_NotifyProfile();
     
     return TRUE;

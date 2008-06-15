@@ -1,0 +1,2 @@
+override chrome://branding/locale/brand.properties file://@CHROMEDIR@/branding/brand.properties
+override chrome://global/locale/netErrorApp.dtd file://@CHROMEDIR@/global/netError.dtd

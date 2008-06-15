@@ -21,6 +21,10 @@
 #include <nsAppDirectoryServiceDefs.h>
 #include <nsDirectoryServiceDefs.h>
 #include <nsArrayEnumerator.h>
+#include <nsIToolkitChromeRegistry.h>
+#include <nsNetUtil.h>
+#include <nsISupportsArray.h>
+#include <nsIMutableArray.h>
 
 #include "HulahopDirectoryProvider.h"
 
@@ -84,7 +88,27 @@ HulahopDirectoryProvider::GetFiles(const char *aKey,
 
     if (!strcmp(aKey, NS_XPCOM_COMPONENT_DIR_LIST)) {  
         rv = NS_NewArrayEnumerator(aResult, mComponentsDirs);
-    } 
+    } else if (!strcmp(aKey, NS_CHROME_MANIFESTS_FILE_LIST)) {
+        nsCOMPtr<nsILocalFile> manifestDir;
+        rv = NS_NewNativeLocalFile (nsDependentCString(DATA_DIR "/chrome"), PR_TRUE,
+                                    getter_AddRefs (manifestDir));
+        NS_ENSURE_SUCCESS (rv, rv);
+
+        nsCOMPtr<nsISupports> element (do_QueryInterface (manifestDir, &rv));
+        NS_ENSURE_SUCCESS (rv, rv);
+
+        nsCOMPtr<nsIMutableArray> array (do_CreateInstance(NS_ARRAY_CONTRACTID));
+        if(!array)
+                return NS_ERROR_OUT_OF_MEMORY;
+        rv = array->AppendElement (manifestDir, PR_FALSE);
+        NS_ENSURE_SUCCESS (rv, rv);
+
+        rv = array->Enumerate(aResult);
+
+        NS_ENSURE_SUCCESS (rv, rv);
+
+        rv = NS_SUCCESS_AGGREGATE_RESULT;
+    }
 
     return rv;
 }

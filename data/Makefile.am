@@ -1,3 +1,5 @@
+SUBDIRS = chrome
+
 hulahopdir = $(pkgdatadir)
 hulahop_DATA = prefs.js
 
