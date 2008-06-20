@@ -14,7 +14,8 @@ globalchrome_DATA = netError.dtd
 EXTRA_DIST = \
 	$(manifest_in_files)	\
 	$(branding_in_files)	\
-	$(globalchrome_DATA)
+	$(globalchrome_DATA)	\
+	$(branding_DATA)
 
 CLEANFILES = \
 	$(manifest_DATA)

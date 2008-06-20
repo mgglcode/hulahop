@@ -8,7 +8,7 @@ xpt_DATA = $(xpt_in_files:.idl=.xpt)
 componentsdir = $(pkglibdir)/components
 components_DATA = hulahopAddCertException.js
 
-EXTRA_DIST = $(xpt_in_files)
+EXTRA_DIST = $(xpt_in_files) $(components_DATA)
 
 CLEANFILES = $(xpt_DATA)
 

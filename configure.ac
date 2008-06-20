@@ -1,4 +1,4 @@
-AC_INIT([hulahop],[0.4.0],[],[hulahop])
+AC_INIT([hulahop],[0.4.1],[],[hulahop])
 
 AC_PREREQ([2.59])
 
@@ -26,7 +26,7 @@ PKG_CHECK_MODULES([LIBXUL],[libxul])
 # FIXME To be able to use pyxpcom we currently need
 # to link to xpcom at build time. Which involves various hacks.
 LIBXUL_SDK_DIR=`$PKG_CONFIG --variable=sdkdir libxul`
-LIBXUL_DIR=`echo $LIBXUL_SDK_DIR | sed -e 's/-devel//'`
+LIBXUL_DIR="`dirname $LIBXUL_SDK_DIR`/xulrunner-`$PKG_CONFIG --modversion libxul`"
 LIBXUL_LIBS="$LIBXUL_LIBS -L$LIBXUL_DIR -lpyxpcom"
 
 LIBXUL_CFLAGS=`$PKG_CONFIG --cflags --define-variable=includetype=unstable libxul`
