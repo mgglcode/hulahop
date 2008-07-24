@@ -186,6 +186,8 @@ hulahop_web_view_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 {
     HulahopWebView *web_view = HULAHOP_WEB_VIEW(widget);
 
+    widget->allocation = *allocation;
+
     if (GTK_WIDGET_REALIZED(widget)) {
         gdk_window_move_resize(widget->window,
                                allocation->x, allocation->y,
