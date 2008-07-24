@@ -25,6 +25,8 @@ from xpcom import components
 from xpcom.components import interfaces
 from xpcom.nsError import *
 
+_views = []
+
 class _Chrome:
     _com_interfaces_ = interfaces.nsIWebBrowserChrome,      \
                        interfaces.nsIWebBrowserChrome2,     \
@@ -41,7 +43,10 @@ class _Chrome:
 
     def provideWindow(self, parent, flags, position_specified,
                       size_specified, uri, name, features):
-        return parent, False
+        if name == "_blank":
+            return parent, False
+        else:
+            return None, False
 
     # nsIWebBrowserChrome
     def destroyBrowserWindow(self):
@@ -223,6 +228,13 @@ class WebView(_hulahop.WebView):
 
         self.create_window()
 
+        self.connect('destroy', self.__destroy_cb)
+
+        _views.append(self)
+
+    def __destroy_cb(self):
+        _views.remove(self)
+
     def _notify_title_changed(self):
         self.notify('title')
 
@@ -267,3 +279,8 @@ class WebView(_hulahop.WebView):
     web_progress = property(get_web_progress)
     web_navigation = property(get_web_navigation)
 
+def lookup_view(chrome):
+    for view in _views:
+        if view._chrome == chrome:
+            return view
+    return None
