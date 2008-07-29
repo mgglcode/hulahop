@@ -1,0 +1,106 @@
+/* FIXME: The values in the block below should be supplied by the activity. */
+const APPLICATION_ID = '{ab9fc198-f515-477b-843f-8fb52810a3e0}'
+const APPLICATION_VENDOR = 'Sugar'
+const APPLICATION_NAME = 'Browser Activity'
+const APPLICATION_VERSION = '@HULAHOP_VERSION@'
+const APPLICATION_BUILD_ID = '@HULAHOP_BUILD_ID@'
+
+const PLATFORM_VERSION = '1.9'
+const PLATFORM_BUILD_ID = '@HULAHOP_BUILD_ID@'
+const OS = '@HULAHOP_HOST_OS@'
+const XPCOMABI = '@HULAHOP_HOST_CPU@' + '-gcc3'
+
+
+const XULAPPINFO_CONTRACTID = "@mozilla.org/xre/app-info;1";
+const XULAPPINFO_CID = Components.ID("{18eec982-b411-4f07-9fca-79d33ee6e4b5}");
+
+const nsIXULAppInfo = Components.interfaces.nsIXULAppInfo;
+const nsIXULRuntime = Components.interfaces.nsIXULRuntime;
+const nsIComponentRegistrar = Components.interfaces.nsIComponentRegistrar;
+const nsIFactory = Components.interfaces.nsIFactory;
+
+function XULAppInfoService()
+{}
+
+XULAppInfoService.prototype.ID = APPLICATION_ID
+XULAppInfoService.prototype.vendor = APPLICATION_VENDOR
+XULAppInfoService.prototype.name = APPLICATION_NAME
+XULAppInfoService.prototype.version = APPLICATION_VERSION
+XULAppInfoService.prototype.appBuildID = APPLICATION_BUILD_ID
+XULAppInfoService.prototype.platformVersion = PLATFORM_VERSION
+XULAppInfoService.prototype.platformBuildID = PLATFORM_BUILD_ID
+XULAppInfoService.prototype.inSafeMode = false
+XULAppInfoService.prototype.logConsoleErrors = true
+XULAppInfoService.prototype.OS = OS
+XULAppInfoService.prototype.XPCOMABI = XPCOMABI
+
+XULAppInfoService.prototype.QueryInterface =
+function appinfo_QueryInterface(iid)
+{
+    if (!iid.equals(nsIXULAppInfo) &&
+        !iid.equals(nsIXULRuntime) &&
+        !iid.equals(nsISupports))
+    {
+        throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+
+    return this;
+}
+
+var XULAppInfoFactory = new Object();
+
+XULAppInfoFactory.createInstance =
+function(outer, iid)
+{
+    if (outer != null)
+        throw Components.results.NS_ERROR_NO_AGGREGATION;
+
+    if (!iid.equals(nsIXULAppInfo) && !iid.equals(nsISupports))
+        throw Components.results.NS_ERROR_INVALID_ARG;
+
+    return new XULAppInfoService();
+}
+
+
+var XULAppInfoModule = new Object();
+
+XULAppInfoModule.registerSelf =
+function mod_registerSelf(compMgr, fileSpec, location, type)
+{
+    compMgr = compMgr.QueryInterface(nsIComponentRegistrar);
+
+    compMgr.registerFactoryLocation(XULAPPINFO_CID,
+                                    "XUL AppInfo service",
+                                    XULAPPINFO_CONTRACTID,
+                                    fileSpec, location, type);
+}
+
+XULAppInfoModule.unregisterSelf =
+function mod_unregisterSelf(compMgr, fileSpec, location)
+{
+}
+
+XULAppInfoModule.getClassObject =
+function mod_getClassObject(compMgr, cid, iid)
+{
+    if (cid.equals(XULAPPINFO_CID))
+        return XULAppInfoFactory;
+
+    if (!iid.equals(nsIFactory))
+        throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+
+    throw Components.results.NS_ERROR_NO_INTERFACE;
+}
+
+XULAppInfoModule.canUnload =
+function mod_canUnload(compMgr)
+{
+    return true;
+}
+
+/* entrypoint */
+function NSGetModule(compMgr, fileSpec)
+{
+    return XULAppInfoModule;
+}
+

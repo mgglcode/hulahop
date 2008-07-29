@@ -1,9 +1,19 @@
-AC_INIT([hulahop],[0.4.2],[],[hulahop])
+m4_define([hulahop_build_id],[2008072400]) # FIXME: when should we update this?
+m4_define([hulahop_version],[0.4.2])
+
+AC_INIT([hulahop],[hulahop_version],[],[hulahop])
+
+AC_SUBST([HULAHOP_VERSION],[hulahop_version])
+AC_SUBST([HULAHOP_BUILD_ID],[hulahop_build_id])
 
 AC_PREREQ([2.59])
 
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([configure.ac])
+
+AC_CANONICAL_HOST
+AC_SUBST([HULAHOP_HOST_CPU],[$host_cpu])
+AC_SUBST([HULAHOP_HOST_OS],[$host_os])
 
 AM_INIT_AUTOMAKE([1.9 foreign dist-bzip2 no-dist-gzip])
 
@@ -35,6 +45,10 @@ AC_SUBST([LIBXUL_CFLAGS])
 AC_SUBST([LIBXUL_LIBS])
 AC_SUBST([LIBXUL_DIR])
 AC_SUBST([LIBXUL_SDK_DIR])
+
+AC_CONFIG_FILES([
+components/xulappinfo.js
+])
 
 AC_OUTPUT([
 Makefile

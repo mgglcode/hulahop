@@ -51,7 +51,8 @@ HulahopDirectoryProvider::GetFile(const char *aKey,
 {
     nsresult rv;
 
-    if (!strcmp(aKey, NS_APP_USER_PROFILE_50_DIR) && mProfilePath) {
+    if ((!strcmp(aKey, NS_APP_USER_PROFILE_50_DIR) ||
+         !strcmp(aKey, NS_APP_USER_PROFILE_LOCAL_50_DIR)) && mProfilePath) {
         NS_ADDREF(*aResult = mProfilePath);
         return NS_OK;
     }
@@ -67,7 +68,19 @@ HulahopDirectoryProvider::GetFile(const char *aKey,
         NS_ADDREF(*aResult = file);
         return NS_OK;
     }
-    
+
+    if (!strcmp(aKey, NS_XPCOM_XPTI_REGISTRY_FILE) && mProfilePath) {
+        nsCOMPtr<nsIFile> file;
+        rv = mProfilePath->Clone(getter_AddRefs(file));
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+        
+        rv = file->AppendNative(nsCString("xpti.dat"));
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+        NS_ADDREF(*aResult = file);
+        return NS_OK;
+    }
+
     if (!strcmp(aKey, NS_APP_PREF_DEFAULTS_50_DIR)) {
         nsCOMPtr<nsILocalFile> dataDir;
         NS_NewNativeLocalFile(nsCString(DATA_DIR),
