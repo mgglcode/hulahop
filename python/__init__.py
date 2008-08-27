@@ -17,6 +17,7 @@
 
 import os
 import sys
+import ConfigParser
 
 import gtk
 
@@ -29,7 +30,15 @@ from hulahop import _hulahop
 
 _XO_DPI = 200
 
+_app_version = ''
+
+def set_app_version(version):
+    global _app_version
+    _app_version = version
+
 def startup(profile_path, components_dirs=[]):
+    _check_compreg(profile_path)
+
     _hulahop.set_profile_path(profile_path)
     if not os.path.isdir(profile_path):
         try:
@@ -48,6 +57,36 @@ def startup(profile_path, components_dirs=[]):
     prefService = cls.getService(components.interfaces.nsIPrefService)
     branch = prefService.getBranch('')
     branch.setIntPref('layout.css.dpi', _get_layout_dpi())
+
+def _check_compreg(profile_path):
+    comp_path = os.path.join(profile_path, 'compatibility.ini')
+    existant = True
+    valid = True
+
+    try:
+        cp = ConfigParser.ConfigParser(defaults={'app_version' : ''})
+        if not cp.read(comp_path):
+            existant = False
+        else:
+            valid = cp.get('main', 'app_version') == _app_version and \
+                    cp.get('main', 'libxul_dir') == config.libxul_dir
+    except ConfigParser.Error:
+        valid = False
+
+    if not valid and existant:
+        compreg = os.path.join(profile_path, 'compreg.dat')
+
+        os.unlink(comp_path)
+        os.unlink(compreg)
+
+    cp = ConfigParser.ConfigParser()
+    cp.add_section('main')
+    cp.set('main', 'app_version', _app_version)
+    cp.set('main', 'libxul_dir', config.libxul_dir)
+
+    f = open(comp_path, 'w')
+    cp.write(f)
+    f.close()
 
 def _get_layout_dpi():
     gtk_xft_dpi = gtk.settings_get_default().get_property('gtk-xft-dpi')
