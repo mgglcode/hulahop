@@ -37,14 +37,14 @@ def set_app_version(version):
     _app_version = version
 
 def startup(profile_path, components_dirs=[]):
-    _check_compreg(profile_path)
-
     _hulahop.set_profile_path(profile_path)
     if not os.path.isdir(profile_path):
         try:
             os.makedirs(profile_path)
         except OSError, exc:
             raise RuntimeError('Could not create user directory.')
+
+    _check_compreg(profile_path)
 
     for path in components_dirs:
         _hulahop.add_components_path(path)
