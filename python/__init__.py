@@ -16,6 +16,7 @@
 # Boston, MA 02111-1307, USA.
 
 import os
+import logging
 import sys
 import ConfigParser
 
@@ -60,33 +61,36 @@ def startup(profile_path, components_dirs=[]):
 
 def _check_compreg(profile_path):
     comp_path = os.path.join(profile_path, 'compatibility.ini')
-    existant = True
-    valid = True
 
     try:
         cp = ConfigParser.ConfigParser(defaults={'app_version' : ''})
         if not cp.read(comp_path):
-            existant = False
+            valid = False
         else:
             valid = cp.get('main', 'app_version') == _app_version and \
                     cp.get('main', 'libxul_dir') == config.libxul_dir
     except ConfigParser.Error:
         valid = False
-
-    if not valid and existant:
-        compreg = os.path.join(profile_path, 'compreg.dat')
-
-        os.unlink(comp_path)
-        os.unlink(compreg)
-
-    cp = ConfigParser.ConfigParser()
-    cp.add_section('main')
-    cp.set('main', 'app_version', _app_version)
-    cp.set('main', 'libxul_dir', config.libxul_dir)
-
-    f = open(comp_path, 'w')
-    cp.write(f)
-    f.close()
+        
+    if not valid:
+        compreg = os.path.join(profile_path, 'compreg.dat')        
+        if os.path.exists(compreg):
+            try:
+                os.unlink(compreg)
+            except OSError, e:
+                logging.error('Unlink error: %s' % e)
+            
+        cp = ConfigParser.ConfigParser()
+        cp.add_section('main')
+        cp.set('main', 'app_version', _app_version)
+        cp.set('main', 'libxul_dir', config.libxul_dir)
+    
+        f = open(comp_path, 'w')
+        try:
+            cp.write(f)
+        except ConfigParser.Error, e:
+            logging.error('Can not write %s error: %s' % (comp_path, e))
+        f.close()
 
 def _get_layout_dpi():
     gtk_xft_dpi = gtk.settings_get_default().get_property('gtk-xft-dpi')
