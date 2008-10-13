@@ -1,0 +1,8 @@
+#!/bin/bash
+for i in `find -type d | cut -b 1-2 --complement`
+do
+	if [[ $i == install* ]] || [[ $i == scripts* ]] || [[ $i == jhbuild* ]] || [[ $i == config* ]]
+	then
+	echo "opt/sugar-jhbuild/"$i
+	fi
+done

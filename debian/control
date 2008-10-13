@@ -1,0 +1,15 @@
+Source: sugar-jhbuild
+Section: desktop
+Priority: extra
+Maintainer: Guy Sheffer <guysoft@gmail.com>
+Build-Depends: debhelper (>= 6)
+Standards-Version: 3.7.3
+Homepage: http://guysoft.wordpress.com
+
+Package: sugar-jhbuild
+Architecture: any
+Depends: bash, python, python-gtk2, xorg, xserver-xephyr, python-gnome2-desktop, git
+#${shlibs:Depends}, ${misc:Depends}, dbus, libavahi-client3, libavahi-common3, libavahi-glib1, libavahi-glib1-2, libdbus-1-3, libdbus-glib-1-2, libxapian15, python-cjson
+#Replaces: libdbus-1-3, dbus, libxapian15, libavahi-common3, libavahi-client3, libavahi-glib1, libavahi-glib1-2, libdbus-glib-1-2
+Description: Sugar built using jhbuild
+ Sugar built using jhbuild

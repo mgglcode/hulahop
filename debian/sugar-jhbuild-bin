@@ -1,0 +1,3 @@
+#!/bin/bash
+PATH=/opt/sugar-jhbuild/install/bin:$PATH
+/opt/sugar-jhbuild/sugar-jhbuild run sugar

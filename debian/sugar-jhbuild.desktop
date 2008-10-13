@@ -1,0 +1,5 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Sugar-jhbuild
+Exec=/usr/bin/sugar-jhbuild
+Type=Application

@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+/opt/sugar-jhbuild/sugar-jhbuild run
+ 

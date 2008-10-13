@@ -1,0 +1,18 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 00_prefix_fix.patch.dpatch by  <guy@localhost>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: set the install prefix
+
+@DPATCH@
+
+--- ./scripts/config.py	2008-10-07 14:14:29.000000000 +0200
++++ ./scripts/config.py	2008-10-07 14:12:06.000000000 +0200
+@@ -79,7 +79,6 @@
+         jhbuild.config.addpath('GTK_PATH', os.path.join(self.prefix, path))
+         jhbuild.config.addpath('GTK_DATA_PREFIX', self.prefix)
+ 
+-        os.environ['SUGAR_PREFIX'] = self.prefix
+         os.environ['SUGAR_PATH'] = os.path.join(self.prefix, 'share', 'sugar')
+         os.environ['SUGAR_LOGGER_LEVEL'] = 'debug'
+ 

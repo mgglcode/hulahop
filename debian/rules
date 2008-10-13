@@ -1,0 +1,109 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+
+include /usr/share/dpatch/dpatch.make
+
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	# Add here commands to configure the package.
+	touch configure-stamp
+
+
+build: build-stamp
+
+build-stamp: configure-stamp  
+	dh_testdir
+
+	# Add here commands to compile the package.
+	dpatch apply-all
+	export SUGAR_PREFIX=/opt/sugar-jhbuild
+	./sugar-jhbuild build
+	touch build-stamp
+
+clean: 
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+	dpatch deapply-all
+
+	dh_clean  --exclude ./source/pygobject-2.14.2/gobject/gobjectmodule.c.orig --exclude ./source/telepathy-salut-0.3.3/src/tube-dbus.c.orig --exclude ./source/telepathy-salut-0.3.3/src/tube-stream.c.orig --exclude ./source/mozilla/widget/src/gtk2/nsDragService.cpp.orig --exclude ./source/mozilla/widget/src/gtk2/nsNativeThemeGTK.cpp.orig --exclude ./source/mozilla/netwerk/cache/src/nsDiskCacheDeviceSQL.cpp.orig --exclude ./source/mozilla/netwerk/cache/src/nsDiskCacheMap.cpp.orig --exclude ./source/mozilla/security/nss/lib/softoken/legacydb/keydb.c.orig --exclude ./source/mozilla/security/nss/lib/softoken/legacydb/pcertdb.c.orig --exclude ./source/mozilla/config/rules.mk.orig --exclude ./source/mozilla/modules/plugin/base/src/nsPluginHostImpl.cpp.orig --exclude ./source/mozilla/modules/libpref/src/nsPrefService.cpp.orig --exclude ./source/mozilla/xulrunner/installer/Makefile.in.orig --exclude ./source/mozilla/db/sqlite3/src/sqlite3.c.orig --exclude ./source/abiword-2.6.4/src/af/util/unix/ut_unixAssert.cpp.orig --exclude ./source/telepathy-gabble-0.7.6/src/tube-dbus.c.orig
+
+DESTDIR = $(CURDIR)/debian/sugar-jhbuild/opt/sugar-jhbuild/
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k  --exclude ./source/pygobject-2.14.2/gobject/gobjectmodule.c.orig --exclude ./source/telepathy-salut-0.3.3/src/tube-dbus.c.orig --exclude ./source/telepathy-salut-0.3.3/src/tube-stream.c.orig --exclude ./source/mozilla/widget/src/gtk2/nsDragService.cpp.orig --exclude ./source/mozilla/widget/src/gtk2/nsNativeThemeGTK.cpp.orig --exclude ./source/mozilla/netwerk/cache/src/nsDiskCacheDeviceSQL.cpp.orig --exclude ./source/mozilla/netwerk/cache/src/nsDiskCacheMap.cpp.orig --exclude ./source/mozilla/security/nss/lib/softoken/legacydb/keydb.c.orig --exclude ./source/mozilla/security/nss/lib/softoken/legacydb/pcertdb.c.orig --exclude ./source/mozilla/config/rules.mk.orig --exclude ./source/mozilla/modules/plugin/base/src/nsPluginHostImpl.cpp.orig --exclude ./source/mozilla/modules/libpref/src/nsPrefService.cpp.orig --exclude ./source/mozilla/xulrunner/installer/Makefile.in.orig --exclude ./source/mozilla/db/sqlite3/src/sqlite3.c.orig --exclude ./source/abiword-2.6.4/src/af/util/unix/ut_unixAssert.cpp.orig --exclude ./source/telepathy-gabble-0.7.6/src/tube-dbus.c.orig
+	dh_installdirs
+	mkdir -p $(DESTDIR)
+
+	mkdir -p $(DESTDIR)/install
+	cp -r -a install/* $(DESTDIR)/install/
+
+	mkdir -p $(DESTDIR)/jhbuild
+	cp -r -a jhbuild/* $(DESTDIR)/jhbuild/
+
+	mkdir -p $(DESTDIR)/scripts	
+	cp -r -a scripts/* $(DESTDIR)/scripts/
+
+	mkdir -p $(DESTDIR)/config	
+	cp -r -a config/* $(DESTDIR)/config/
+
+	cp -a sugar-jhbuild $(DESTDIR)	
+	mkdir -p $(CURDIR)/debian/sugar-jhbuild/usr/share/xsessions
+	cp debian/sugar-jhbuild.desktop $(CURDIR)/debian/sugar-jhbuild/usr/share/xsessions
+	mkdir -p $(CURDIR)/debian/sugar-jhbuild/usr/bin
+	cp debian/sugar-jhbuild-emulator $(CURDIR)/debian/sugar-jhbuild/usr/bin/
+	chmod 755 $(CURDIR)/debian/sugar-jhbuild/usr/bin/sugar-jhbuild-emulator
+	cp debian/sugar-jhbuild-bin $(CURDIR)/debian/sugar-jhbuild/usr/bin/sugar-jhbuild
+	chmod 755 $(CURDIR)/debian/sugar-jhbuild/usr/bin/sugar-jhbuild
+	#virtualenv $(DESTDIR)/install/
+
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs 
+	dh_installdocs
+	dh_installexamples
+#	dh_install
+#	dh_installmenu
+#	dh_installdebconf	
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+#	dh_python
+#	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_perl
+#	dh_makeshlibs
+	dh_installdeb
+#	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure
