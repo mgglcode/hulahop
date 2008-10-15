@@ -227,6 +227,13 @@ class WebView(_hulahop.WebView):
                                            interfaces.nsIWebProgressListener)
 
         self._status = ''
+        self._first_uri = None
+
+    def do_setup(self):
+        _hulahop.WebView.do_setup(self)
+
+        if self._first_uri:
+            self.load_uri(self._first_uri)
 
     def _notify_title_changed(self):
         self.notify('title')
@@ -261,9 +268,12 @@ class WebView(_hulahop.WebView):
         return self.browser.contentDOMWindow
 
     def load_uri(self, uri):
-        self.web_navigation.loadURI(
-                    uri, interfaces.nsIWebNavigation.LOAD_FLAGS_NONE,
-                    None, None, None)
+        try:
+            self.web_navigation.loadURI(
+                        uri, interfaces.nsIWebNavigation.LOAD_FLAGS_NONE,
+                        None, None, None)
+        except xpcom.Exception:
+            self._first_uri = uri
 
     dom_window = property(get_dom_window)
     browser = property(get_browser)

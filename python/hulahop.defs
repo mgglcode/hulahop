@@ -5,6 +5,12 @@
   (gtype-id "HULAHOP_TYPE_WEB_VIEW")
 )
 
+(define-virtual setup
+  (of-object "HulahopWebView")
+  (c-name "hulahop_web_view_setup")
+  (return-type "none")
+)
+
 (define-method grab_focus
   (of-object "HulahopWebView")
   (c-name "hulahop_web_view_grab_focus")

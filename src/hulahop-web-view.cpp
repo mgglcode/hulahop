@@ -49,10 +49,6 @@ struct _HulahopWebView {
     GtkWidget *mozilla_widget;
 };
 
-struct _HulahopWebViewClass {
-	GtkBinClass base_class;
-};
-
 G_DEFINE_TYPE(HulahopWebView, hulahop_web_view, GTK_TYPE_BIN)
 
 static GObjectClass *parent_class = NULL;
@@ -95,6 +91,13 @@ hulahop_web_view_unrealize(GtkWidget *widget)
     GTK_WIDGET_CLASS(parent_class)->unrealize(widget);
 }
 
+void
+hulahop_web_view_setup(HulahopWebView *web_view)
+{
+    web_view->base_window->Create();
+    web_view->mozilla_widget = GTK_BIN(web_view)->child;
+}
+
 static void
 hulahop_web_view_realize(GtkWidget *widget)
 {
@@ -126,9 +129,10 @@ hulahop_web_view_realize(GtkWidget *widget)
     if (web_view->mozilla_widget) {
         gtk_widget_reparent(web_view->mozilla_widget, widget);
     } else {
-        web_view->base_window->Create();
-        web_view->mozilla_widget = GTK_BIN(web_view)->child;
+        HULAHOP_WEB_VIEW_GET_CLASS(web_view)->setup(web_view);
     }
+
+    g_assert(web_view->mozilla_widget);
 
     g_signal_connect_object(web_view->mozilla_widget,
                             "focus-in-event",
@@ -231,7 +235,9 @@ hulahop_web_view_class_init(HulahopWebViewClass *web_view_class)
     widget_class->unmap = hulahop_web_view_unmap;
     widget_class->size_allocate = hulahop_web_view_size_allocate;
 
-    gobject_class->dispose = hulahop_web_view_dispose;    
+    gobject_class->dispose = hulahop_web_view_dispose;
+
+    web_view_class->setup = hulahop_web_view_setup;
 }
 
 static void
@@ -239,8 +245,6 @@ hulahop_web_view_init(HulahopWebView *web_view)
 {
     web_view->offscreen_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_realize(web_view->offscreen_window);
-
-    nsresult rv;
     
     web_view->browser = do_CreateInstance
             ("@mozilla.org/embedding/browser/nsWebBrowser;1");
@@ -250,8 +254,11 @@ hulahop_web_view_init(HulahopWebView *web_view)
     item->SetItemType(nsIDocShellTreeItem::typeContentWrapper);
 
     web_view->base_window = do_QueryInterface(web_view->browser);
+    g_assert(web_view->base_window);
 
+    nsresult rv;
     rv = web_view->base_window->InitWindow(web_view, nsnull, 0, 0, 100, 100);
+    g_assert(NS_SUCCEEDED(rv));
 
     GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(web_view), GTK_NO_WINDOW);
 }

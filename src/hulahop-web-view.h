@@ -35,6 +35,12 @@ typedef struct _HulahopWebViewClass       HulahopWebViewClass;
 #define HULAHOP_IS_WEB_VIEW_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE((klass), HULAHOP_TYPE_WEB_VIEW))
 #define HULAHOP_WEB_VIEW_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS((object), HULAHOP_TYPE_WEB_VIEW, HulahopWebViewClass))
 
+struct _HulahopWebViewClass {
+    GtkBinClass base_class;
+
+    void (* setup) (HulahopWebView *web_view);
+};
+
 GType     hulahop_web_view_get_type        (void);
 void      hulahop_web_view_grab_focus      (HulahopWebView *web_view);
 
