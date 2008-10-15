@@ -25,8 +25,6 @@ from xpcom import components
 from xpcom.components import interfaces
 from xpcom.nsError import *
 
-_views = []
-
 class _Chrome:
     _com_interfaces_ = interfaces.nsIWebBrowserChrome,      \
                        interfaces.nsIWebBrowserChrome2,     \
@@ -147,6 +145,9 @@ class _Chrome:
         #logging.debug("nsIEmbeddingSiteWindow.get_visibility: %r" % self.web_view.get_toplevel().props.visible)
         return self.web_view.get_toplevel().props.visible
 
+    def get_webBrowser(self):
+        return self.web_view.browser
+
     def get_chromeFlags(self):
         return self._chrome_flags
 
@@ -206,6 +207,7 @@ class WebView(_hulahop.WebView):
         'status' : (str, None, None, None,
                    gobject.PARAM_READABLE)
     }
+
     def __init__(self):
         _hulahop.WebView.__init__(self)
         
@@ -225,15 +227,6 @@ class WebView(_hulahop.WebView):
                                            interfaces.nsIWebProgressListener)
 
         self._status = ''
-
-        self.create_window()
-
-        self.connect('destroy', self.__destroy_cb)
-
-        _views.append(self)
-
-    def __destroy_cb(self):
-        _views.remove(self)
 
     def _notify_title_changed(self):
         self.notify('title')
@@ -278,9 +271,3 @@ class WebView(_hulahop.WebView):
     doc_shell = property(get_doc_shell)
     web_progress = property(get_web_progress)
     web_navigation = property(get_web_navigation)
-
-def lookup_view(chrome):
-    for view in _views:
-        if view._chrome == chrome:
-            return view
-    return None

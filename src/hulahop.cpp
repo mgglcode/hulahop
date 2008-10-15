@@ -20,6 +20,12 @@
 #include <nsCOMPtr.h>
 #include <nsILocalFile.h>
 #include <nsXULAppAPI.h>
+#include <nsIWindowWatcher.h>
+#include <nsIWebBrowser.h>
+#include <nsIWebBrowserChrome.h>
+#include <nsIDOMWindow.h>
+#include <nsIBaseWindow.h>
+#include <PyXPCOM.h>
 
 #include "HulahopDirectoryProvider.h"
 #include "hulahop.h"
@@ -86,4 +92,35 @@ void
 hulahop_add_components_path(const char *path)
 {
     kDirectoryProvider.AddComponentsPath(path);
+}
+
+HulahopWebView *
+hulahop_get_view_for_window(PyObject *dom_window)
+{
+    nsCOMPtr<nsIDOMWindow> domWindow;
+    Py_nsISupports::InterfaceFromPyObject(dom_window,
+                                          NS_GET_IID(nsIDOMWindow),
+                                          getter_AddRefs(domWindow),
+                                          PR_FALSE);
+    NS_ENSURE_TRUE(domWindow, NULL);
+
+    nsCOMPtr<nsIWindowWatcher> wwatch = do_GetService
+                        ("@mozilla.org/embedcomp/window-watcher;1");
+    NS_ENSURE_TRUE(wwatch, NULL);
+
+    nsCOMPtr<nsIWebBrowserChrome> chrome;
+    wwatch->GetChromeForWindow(domWindow, getter_AddRefs(chrome));
+    NS_ENSURE_TRUE(chrome, NULL);
+
+    nsCOMPtr<nsIWebBrowser> browser;
+    chrome->GetWebBrowser(getter_AddRefs(browser));
+    NS_ENSURE_TRUE(browser, NULL);
+
+    nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(browser);
+    NS_ENSURE_TRUE(baseWindow, NULL);
+
+    gpointer native_parent;
+    baseWindow->GetParentNativeWindow(&native_parent);
+
+    return HULAHOP_WEB_VIEW(native_parent);
 }

@@ -38,7 +38,6 @@ typedef struct _HulahopWebViewClass       HulahopWebViewClass;
 GType     hulahop_web_view_get_type        (void);
 void      hulahop_web_view_grab_focus      (HulahopWebView *web_view);
 
-void      hulahop_web_view_create_window   (HulahopWebView *web_view);
 PyObject *hulahop_web_view_get_browser     (HulahopWebView *web_view);
 PyObject *hulahop_web_view_get_window_root (HulahopWebView *web_view);
 
@@ -47,7 +46,6 @@ void      hulahop_web_view_pop_js_context  (HulahopWebView *web_view);
 
 void      hulahop_web_view_evaluate_script (HulahopWebView *web_view,
                                             const char     *script);
-
 
 G_END_DECLS
 

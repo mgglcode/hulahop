@@ -20,14 +20,15 @@
 #ifndef __HULAHOP_H__
 #define __HULAHOP_H__
 
-#include <glib.h>
+#include "hulahop-web-view.h"
 
 G_BEGIN_DECLS
 
-gboolean  hulahop_startup             (void);
-void      hulahop_shutdown            (void);
-void      hulahop_set_profile_path    (const char *path);
-void      hulahop_add_components_path (const char *path);
+gboolean        hulahop_startup             (void);
+void            hulahop_shutdown            (void);
+void            hulahop_set_profile_path    (const char *path);
+void            hulahop_add_components_path (const char *path);
+HulahopWebView *hulahop_get_view_for_window (PyObject   *dom_window);
 
 G_END_DECLS
 

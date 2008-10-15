@@ -27,6 +27,7 @@ from hulahop import config
 sys.path.insert(0, os.path.join(config.libxul_dir, 'python'))
 
 from hulahop._hulahop import shutdown
+from hulahop._hulahop import get_view_for_window
 from hulahop import _hulahop
 
 _XO_DPI = 200

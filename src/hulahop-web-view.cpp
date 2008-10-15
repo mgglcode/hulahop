@@ -123,9 +123,12 @@ hulahop_web_view_realize(GtkWidget *widget)
     widget->style = gtk_style_attach (widget->style, widget->window);
     gtk_style_set_background(widget->style, widget->window, GTK_STATE_NORMAL);
 
-    g_assert(GTK_IS_WIDGET(web_view->mozilla_widget));
-
-    gtk_widget_reparent(web_view->mozilla_widget, widget);
+    if (web_view->mozilla_widget) {
+        gtk_widget_reparent(web_view->mozilla_widget, widget);
+    } else {
+        web_view->base_window->Create();
+        web_view->mozilla_widget = GTK_BIN(web_view)->child;
+    }
 
     g_signal_connect_object(web_view->mozilla_widget,
                             "focus-in-event",
@@ -248,9 +251,9 @@ hulahop_web_view_init(HulahopWebView *web_view)
 
     web_view->base_window = do_QueryInterface(web_view->browser);
 
-    rv = web_view->base_window->InitWindow(web_view->offscreen_window,
-                                          nsnull, 0, 0, 100, 100);
-    g_assert(NS_SUCCEEDED(rv));
+    rv = web_view->base_window->InitWindow(web_view, nsnull, 0, 0, 100, 100);
+
+    GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(web_view), GTK_NO_WINDOW);
 }
 
 PyObject *
@@ -278,19 +281,6 @@ hulahop_web_view_get_window_root(HulahopWebView *web_view)
 
     return PyObject_FromNSInterface(eventTarget,
                                     NS_GET_IID(nsIDOMEventTarget));
-}
-
-void
-hulahop_web_view_create_window(HulahopWebView *web_view)
-{
-    nsresult rv;
-
-    rv = web_view->base_window->Create();
-    g_assert(NS_SUCCEEDED(rv));
-
-    web_view->mozilla_widget = GTK_BIN(web_view->offscreen_window)->child;
-
-    GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(web_view), GTK_NO_WINDOW);
 }
 
 void

@@ -5,12 +5,6 @@
   (gtype-id "HULAHOP_TYPE_WEB_VIEW")
 )
 
-(define-method create_window
-  (of-object "HulahopWebView")
-  (c-name "hulahop_web_view_create_window")
-  (return-type "none")
-)
-
 (define-method grab_focus
   (of-object "HulahopWebView")
   (c-name "hulahop_web_view_grab_focus")
@@ -74,5 +68,13 @@
     '("gchar*" "script")
   )
   (return-type "none")
+)
+
+(define-function get_view_for_window
+  (c-name "hulahop_get_view_for_window")
+  (return-type "HulahopWebView*")
+  (parameters
+    '("PyObject*" "dom_window")
+  )
 )
 
