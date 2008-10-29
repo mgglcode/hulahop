@@ -1,5 +1,5 @@
 m4_define([hulahop_build_id],[2008072400]) # FIXME: when should we update this?
-m4_define([hulahop_version],[0.4.6])
+m4_define([hulahop_version],[0.4.7])
 
 AC_INIT([hulahop],[hulahop_version],[],[hulahop])
 
