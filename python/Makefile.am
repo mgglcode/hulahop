@@ -11,7 +11,7 @@ INCLUDES =					\
 
 pkgpyexec_LTLIBRARIES = _hulahop.la
 
-_hulahop_la_LDFLAGS = -module -avoid-version -R$(LIBXUL_DIR) -dlopen self
+_hulahop_la_LDFLAGS = -module -avoid-version -R$(LIBXUL_DIR)
 _hulahop_la_LIBADD = 				\
 	$(LIBXUL_LIBS)				\
 	$(DEPS_LIBS)				\
