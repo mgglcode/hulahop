@@ -19,6 +19,8 @@ AM_INIT_AUTOMAKE([1.9 foreign dist-bzip2 no-dist-gzip])
 
 AC_PROG_LIBTOOL
 
+AC_PROG_CXX
+
 PKG_CHECK_MODULES(DEPS, gtk+-2.0)
 
 AM_PATH_PYTHON
