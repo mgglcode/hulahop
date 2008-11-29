@@ -4,6 +4,7 @@ headers
 #include <Python.h>
 #include <pygtk/pygtk.h>
 
+#include "hulahop.h"
 #include "hulahop-web-view.h"
 
 %%
