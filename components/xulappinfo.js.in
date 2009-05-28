@@ -16,6 +16,7 @@ const XULAPPINFO_CID = Components.ID("{18eec982-b411-4f07-9fca-79d33ee6e4b5}");
 
 const nsIXULAppInfo = Components.interfaces.nsIXULAppInfo;
 const nsIXULRuntime = Components.interfaces.nsIXULRuntime;
+const nsISupports = Components.interfaces.nsISupports;
 const nsIComponentRegistrar = Components.interfaces.nsIComponentRegistrar;
 const nsIFactory = Components.interfaces.nsIFactory;
 
