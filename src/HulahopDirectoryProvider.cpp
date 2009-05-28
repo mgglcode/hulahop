@@ -51,6 +51,9 @@ HulahopDirectoryProvider::GetFile(const char *aKey,
 {
     nsresult rv;
 
+    // All our paths are currently persistent
+    *aPersist = PR_TRUE;
+
     if ((!strcmp(aKey, NS_APP_USER_PROFILE_50_DIR) ||
          !strcmp(aKey, NS_APP_USER_PROFILE_LOCAL_50_DIR)) && mProfilePath) {
         NS_ADDREF(*aResult = mProfilePath);
