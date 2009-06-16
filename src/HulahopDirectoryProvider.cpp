@@ -25,6 +25,7 @@
 #include <nsNetUtil.h>
 #include <nsISupportsArray.h>
 #include <nsIMutableArray.h>
+#include <nsXULAppAPI.h>
 
 #include "HulahopDirectoryProvider.h"
 
@@ -55,8 +56,13 @@ HulahopDirectoryProvider::GetFile(const char *aKey,
     *aPersist = PR_TRUE;
 
     if ((!strcmp(aKey, NS_APP_USER_PROFILE_50_DIR) ||
-         !strcmp(aKey, NS_APP_USER_PROFILE_LOCAL_50_DIR)) && mProfilePath) {
-        NS_ADDREF(*aResult = mProfilePath);
+         !strcmp(aKey, NS_APP_USER_PROFILE_LOCAL_50_DIR) ||
+         !strcmp(aKey, NS_APP_PROFILE_DIR_STARTUP)) && mProfilePath) {
+        nsCOMPtr<nsIFile> file;
+        rv = mProfilePath->Clone(getter_AddRefs(file));
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+        NS_ADDREF(*aResult = file);
         return NS_OK;
     }
 
@@ -90,6 +96,33 @@ HulahopDirectoryProvider::GetFile(const char *aKey,
                               PR_TRUE, getter_AddRefs(dataDir));
 
         NS_ADDREF(*aResult = dataDir);
+        return NS_OK;
+    }
+
+    if (!strcmp(aKey, NS_APP_PREFS_50_FILE)) {
+        nsCOMPtr<nsIFile> file;
+        rv = mProfilePath->Clone(getter_AddRefs(file));
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+        rv = file->AppendNative(nsCString("prefs.js"));
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+        nsCAutoString inDir;
+        file->GetNativePath(inDir);
+        printf("returning %s for key NS_APP_PREFS_50_FILE\n", inDir.get());fflush(stdout);
+        NS_ADDREF(*aResult = file);
+        return NS_OK;
+    }
+
+    if (!strcmp(aKey, XRE_USER_SYS_EXTENSION_DIR) && mProfilePath) {
+        nsCOMPtr<nsIFile> file;
+        rv = mProfilePath->Clone(getter_AddRefs(file));
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+        rv = file->AppendNative(nsCString("extensions"));
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+        NS_ADDREF(*aResult = file);
         return NS_OK;
     }
     
