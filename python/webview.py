@@ -17,6 +17,7 @@
 import logging
 
 import gobject
+import gtk
 
 from hulahop import _hulahop
 
@@ -38,6 +39,7 @@ class _Chrome:
         self.title = ''
         self._modal = False
         self._chrome_flags = interfaces.nsIWebBrowserChrome.CHROME_ALL
+        self._visible = False
 
     def provideWindow(self, parent, flags, position_specified,
                       size_specified, uri, name, features):
@@ -140,10 +142,6 @@ class _Chrome:
         logging.debug("nsIEmbeddingSiteWindow.set_title: %r" % title)
         self.title = title
         self.web_view._notify_title_changed()
-        
-    def get_visibility(self):
-        #logging.debug("nsIEmbeddingSiteWindow.get_visibility: %r" % self.web_view.get_toplevel().props.visible)
-        return self.web_view.get_toplevel().props.visible
 
     def get_webBrowser(self):
         return self.web_view.browser
@@ -154,13 +152,20 @@ class _Chrome:
     def set_chromeFlags(self, flags):
         self._chrome_flags = flags
 
+    def get_visibility(self):
+        logging.debug("nsIEmbeddingSiteWindow.get_visibility: %r" % self._visible)
+        # See bug https://bugzilla.mozilla.org/show_bug.cgi?id=312998
+        # Work around the problem that sometimes the window is already visible
+        # even though mVisibility isn't true yet.
+        visibility = self.web_view.props.visibility
+        mapped = self.web_view.flags() & gtk.MAPPED
+        return visibility or (not self.web_view.is_chrome and mapped)
+
     def set_visibility(self, visibility):
         logging.debug("nsIEmbeddingSiteWindow.set_visibility: %r" % visibility)
-        if visibility:
-            self.web_view.show()
-            self.web_view.get_toplevel().show()
-        else:
-            self.web_view.get_toplevel().hide()
+        if visibility == self.web_view.props.visibility:
+            return
+        self.web_view.props.visibility = visibility
 
     # nsIWebProgressListener
     def onStateChange(self, web_progress, request, state_flags, status):
@@ -176,10 +181,14 @@ class _Chrome:
 
     # nsIInterfaceRequestor
     def queryInterface(self, uuid):
+        if uuid == interfaces.nsIDOMWindow:
+            return self.web_view.dom_window
+
         if not uuid in self._com_interfaces_:
             # Components.returnCode = Cr.NS_ERROR_NO_INTERFACE;
             logging.warning('Interface %s not implemented by this instance: %r' % (uuid, self))
             return None
+
         return xpcom.server.WrapObject(self, uuid)
 
     def getInterface(self, uuid):
@@ -205,7 +214,9 @@ class WebView(_hulahop.WebView):
         'title' : (str, None, None, None,
                    gobject.PARAM_READABLE),
         'status' : (str, None, None, None,
-                   gobject.PARAM_READABLE)
+                   gobject.PARAM_READABLE),
+        'visibility' : (bool, None, None, False,
+                        gobject.PARAM_READWRITE)
     }
 
     def __init__(self):
@@ -228,6 +239,7 @@ class WebView(_hulahop.WebView):
 
         self._status = ''
         self._first_uri = None
+        self._visibility = False
 
     def do_setup(self):
         _hulahop.WebView.do_setup(self)
@@ -247,6 +259,12 @@ class WebView(_hulahop.WebView):
             return self._chrome.title
         elif pspec.name == 'status':
             return self._status
+        elif pspec.name == 'visibility':
+            return self._visibility
+
+    def do_set_property(self, pspec, value):
+        if pspec.name == 'visibility':
+            self._visibility = value
 
     def get_window_root(self):
         return _hulahop.WebView.get_window_root(self)

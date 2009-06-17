@@ -17,6 +17,8 @@ AC_SUBST([HULAHOP_HOST_OS],[$host_os])
 
 AM_INIT_AUTOMAKE([1.9 foreign dist-bzip2 no-dist-gzip])
 
+AM_MAINTAINER_MODE
+
 AC_PROG_LIBTOOL
 
 AC_PROG_CXX
