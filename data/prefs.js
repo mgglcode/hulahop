@@ -98,3 +98,4 @@ pref("browser.sessionhistory.max_entries", 50);
 // Add vendor useragent string
 pref("general.useragent.locale", "en-US");
 pref("general.useragent.extra.firefox", "Firefox/3.0");
+pref("general.useragent.vendorComment", "Sugar Labs/@SP_VERSION@");

@@ -1,10 +1,12 @@
 m4_define([hulahop_build_id],[2008072400]) # FIXME: when should we update this?
 m4_define([hulahop_version],[0.5.0])
+m4_define([sp_version],[0.86])
 
 AC_INIT([hulahop],[0.5.0],[],[hulahop])
 
 AC_SUBST([HULAHOP_VERSION],[hulahop_version])
 AC_SUBST([HULAHOP_BUILD_ID],[hulahop_build_id])
+AC_SUBST([SP_VERSION],[sp_version])
 
 AC_PREREQ([2.59])
 
@@ -58,6 +60,7 @@ AC_OUTPUT([
 Makefile
 components/Makefile
 data/Makefile
+data/prefs.js
 data/chrome/Makefile
 src/Makefile
 python/Makefile
