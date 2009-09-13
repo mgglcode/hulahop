@@ -104,12 +104,16 @@ hulahop_get_view_for_window(PyObject *dom_window)
                                           PR_FALSE);
     NS_ENSURE_TRUE(domWindow, NULL);
 
+    nsCOMPtr<nsIDOMWindow> topDomWindow;
+    domWindow->GetTop(getter_AddRefs(topDomWindow));
+    NS_ENSURE_TRUE(topDomWindow, NULL);
+
     nsCOMPtr<nsIWindowWatcher> wwatch = do_GetService
                         ("@mozilla.org/embedcomp/window-watcher;1");
     NS_ENSURE_TRUE(wwatch, NULL);
 
     nsCOMPtr<nsIWebBrowserChrome> chrome;
-    wwatch->GetChromeForWindow(domWindow, getter_AddRefs(chrome));
+    wwatch->GetChromeForWindow(topDomWindow, getter_AddRefs(chrome));
     NS_ENSURE_TRUE(chrome, NULL);
 
     nsCOMPtr<nsIWebBrowser> browser;
