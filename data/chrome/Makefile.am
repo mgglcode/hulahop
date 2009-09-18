@@ -21,5 +21,5 @@ CLEANFILES = \
 	$(manifest_DATA)
 
 DISTCLEANFILES = \
-	$(manifest_DATA)	\
-	$(branding_DATA)
+	$(manifest_DATA)
+
