@@ -81,6 +81,20 @@ child_focus_out_cb(GtkWidget      *widget,
     return FALSE;
 }
 
+static gboolean
+child_button_press_cb(GtkWidget      *widget,
+                      GdkEventFocus  *event,
+                      HulahopWebView *web_view)
+{
+    nsCOMPtr<nsIWebBrowserFocus> webBrowserFocus;
+    webBrowserFocus = do_QueryInterface(web_view->browser);
+    NS_ENSURE_TRUE(webBrowserFocus, FALSE);
+
+    webBrowserFocus->Activate();
+
+    return FALSE;
+}
+
 static void
 hulahop_web_view_unrealize(GtkWidget *widget)
 {
@@ -141,6 +155,24 @@ hulahop_web_view_realize(GtkWidget *widget)
     g_signal_connect_object(web_view->mozilla_widget,
                             "focus-out-event",
                             G_CALLBACK(child_focus_out_cb),
+                            web_view, (GConnectFlags)0);
+
+    /*
+     * xulrunner-1.9.2 doesn't like receiving click events on text inputs
+     * without being told that it has been focused first. However, GTK+
+     * sends button-press-event before focus-in-event, so we must use
+     * button-press-event to tell mozilla that it has been given focus.
+     *
+     * Ordinarily, mozilla would not let us bind to button_press_event here
+     * because it has it's own handler which stops emission of the signal
+     * (our handler would simply not be called). This workaround will only
+     * come into effect with a patched xulrunner at time of writing.
+     *
+     * See https://bugzilla.mozilla.org/show_bug.cgi?id=533245
+     */
+    g_signal_connect_object(web_view->mozilla_widget,
+                            "button-press-event",
+                            G_CALLBACK(child_button_press_cb),
                             web_view, (GConnectFlags)0);
 }
 
