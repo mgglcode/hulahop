@@ -32,7 +32,7 @@
 #include <nsIJSContextStack.h>
 #include <nsIScriptGlobalObject.h>
 #include <nsIScriptContext.h>
-#include <PyXPCOM.h>
+#include <pyxpcom/PyXPCOM.h>
 
 #include <gtk/gtkfixed.h>
 #include <gtk/gtkwindow.h>

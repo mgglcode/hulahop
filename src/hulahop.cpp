@@ -25,7 +25,7 @@
 #include <nsIWebBrowserChrome.h>
 #include <nsIDOMWindow.h>
 #include <nsIBaseWindow.h>
-#include <PyXPCOM.h>
+#include <pyxpcom/PyXPCOM.h>
 
 #include "HulahopDirectoryProvider.h"
 #include "hulahop.h"
