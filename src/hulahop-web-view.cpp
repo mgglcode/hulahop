@@ -82,10 +82,13 @@ child_focus_out_cb(GtkWidget      *widget,
 }
 
 static gboolean
-child_button_press_cb(GtkWidget      *widget,
-                      GdkEventFocus  *event,
-                      HulahopWebView *web_view)
+child_event_cb(GtkWidget      *widget,
+               GdkEvent       *event,
+               HulahopWebView *web_view)
 {
+    if (event->type != GDK_BUTTON_PRESS)
+        return FALSE;
+
     nsCOMPtr<nsIWebBrowserFocus> webBrowserFocus;
     webBrowserFocus = do_QueryInterface(web_view->browser);
     NS_ENSURE_TRUE(webBrowserFocus, FALSE);
@@ -163,16 +166,16 @@ hulahop_web_view_realize(GtkWidget *widget)
      * sends button-press-event before focus-in-event, so we must use
      * button-press-event to tell mozilla that it has been given focus.
      *
-     * Ordinarily, mozilla would not let us bind to button_press_event here
-     * because it has it's own handler which stops emission of the signal
-     * (our handler would simply not be called). This workaround will only
-     * come into effect with a patched xulrunner at time of writing.
+     * Mozilla does not let us bind to button_press_event here because it has
+     * it's own handler which stops emission of the signal (our handler would
+     * simply not be called). So, we catch the relevant event via the earlier
+     * "event" signal.
      *
      * See https://bugzilla.mozilla.org/show_bug.cgi?id=533245
      */
     g_signal_connect_object(web_view->mozilla_widget,
-                            "button-press-event",
-                            G_CALLBACK(child_button_press_cb),
+                            "event",
+                            G_CALLBACK(child_event_cb),
                             web_view, (GConnectFlags)0);
 }
 
